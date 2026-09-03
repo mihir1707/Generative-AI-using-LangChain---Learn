@@ -1,0 +1,20 @@
+from langchain_huggingface import HuggingFaceEmbeddings
+
+embeddings = HuggingFaceEmbeddings(
+    model_name = "sentence-transformers/all-MiniLM-L6-v2"
+)
+
+text = "Delhi is the capital of India"
+
+# documents = [
+#     "Gandhinagar is the capital of Gujarat",
+#     "Mumbai is the capital of Maharashtra",
+#     "Kolkata is the capital of West Bengal",
+#     "Delhi is the capital of India",
+# ]
+
+result = embeddings.embed_query(text)
+# result = embeddings.embed_documents(documents)
+
+print(result)
+print(str(result))

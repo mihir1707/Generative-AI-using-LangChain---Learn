@@ -1,0 +1,55 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Virtual environments
+.venv/
+venv/
+env/
+ENV/
+
+# Distribution / packaging
+build/
+dist/
+*.egg-info/
+
+# PyCharm
+.idea/
+
+# VS Code
+.vscode/
+
+# dotenv
+.env
+
+# Jupyter
+.ipynb_checkpoints/
+
+# Cache
+.pytest_cache/
+.mypy_cache/
+.cache/
+
+# Logs
+logs/
+*.log
+
+# OS files
+.DS_Store
+
+# Hugging Face / model artifacts
+hf_home/
+models/
+weights/
+
+# Secrets and keys
+*.pem
+*.key
+credentials/
+
+# Notebook outputs
+*.nbconvert.ipynb
+
+# Local settings
+local_settings.py
