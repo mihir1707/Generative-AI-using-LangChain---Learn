@@ -1,0 +1,1454 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>GenAI & LangChain – Complete Study Guide</title>
+  <meta name="description" content="Complete study guide for GenAI and LangChain — definitions, real-life examples, code, step-by-step explanations covering all topics from beginner to advanced."/>
+  <link rel="preconnect" href="https://fonts.googleapis.com"/>
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet"/>
+  <style>
+    /* ── RESET ─────────────────────────────────── */
+    *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+    :root{
+      --bg:#0d0f1a; --bg2:#12152b; --bg3:#181c35; --border:rgba(255,255,255,.08);
+      --text:#e2e8f0; --muted:#94a3b8;
+      --c1:#6366f1; --c2:#a78bfa; --c3:#38bdf8; --c4:#34d399; --c5:#f59e0b;
+      --c6:#f472b6; --red:#fb7185; --code:#0a0c18;
+    }
+    html{scroll-behavior:smooth}
+    body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);line-height:1.75;font-size:15px}
+    ::-webkit-scrollbar{width:5px}::-webkit-scrollbar-track{background:var(--bg)}::-webkit-scrollbar-thumb{background:var(--c1);border-radius:3px}
+
+    /* ── HEADER ─────────────────────────────────── */
+    header{background:linear-gradient(135deg,#0d0f1a 0%,#1a1040 50%,#0d1a2a 100%);padding:80px 24px 60px;text-align:center;position:relative;overflow:hidden;border-bottom:1px solid var(--border)}
+    header::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse 80% 60% at 50% 0%,rgba(99,102,241,.25) 0%,transparent 70%);pointer-events:none}
+    .badge{display:inline-flex;align-items:center;gap:8px;background:rgba(99,102,241,.15);border:1px solid rgba(99,102,241,.4);border-radius:999px;padding:6px 18px;font-size:12px;font-weight:700;letter-spacing:.08em;color:var(--c2);text-transform:uppercase;margin-bottom:24px}
+    header h1{font-size:clamp(2rem,5vw,3.6rem);font-weight:800;background:linear-gradient(135deg,#fff 0%,var(--c2) 50%,var(--c3) 100%);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;line-height:1.15;margin-bottom:14px}
+    header p{color:var(--muted);font-size:1.05rem;max-width:580px;margin:0 auto 32px}
+    .stats{display:flex;gap:32px;justify-content:center;flex-wrap:wrap;margin-top:8px}
+    .stat{text-align:center}.stat .n{font-size:1.8rem;font-weight:800;color:var(--c2)}.stat .l{font-size:11px;color:var(--muted);letter-spacing:.06em;text-transform:uppercase;margin-top:2px}
+
+    /* ── TOC ─────────────────────────────────── */
+    nav.toc{max-width:1100px;margin:0 auto;padding:40px 24px 50px;display:flex;flex-wrap:wrap;gap:8px;justify-content:center}
+    nav.toc a{display:inline-block;background:var(--bg3);border:1px solid var(--border);color:var(--muted);padding:7px 14px;border-radius:8px;font-size:13px;font-weight:500;text-decoration:none;transition:all .2s}
+    nav.toc a:hover{background:rgba(99,102,241,.15);border-color:var(--c1);color:var(--c2);transform:translateY(-2px)}
+
+    /* ── MAIN ─────────────────────────────────── */
+    main{max-width:1100px;margin:0 auto;padding:0 24px 80px}
+
+    /* ── SECTION ─────────────────────────────── */
+    .section{margin-bottom:80px;scroll-margin-top:80px}
+    .section-header{display:flex;align-items:center;gap:16px;margin-bottom:28px;padding-bottom:16px;border-bottom:1px solid var(--border)}
+    .sicon{width:52px;height:52px;border-radius:14px;display:flex;align-items:center;justify-content:center;font-size:24px;flex-shrink:0}
+    .i1{background:linear-gradient(135deg,rgba(99,102,241,.3),rgba(99,102,241,.1));border:1px solid rgba(99,102,241,.4)}
+    .i2{background:linear-gradient(135deg,rgba(167,139,250,.3),rgba(167,139,250,.1));border:1px solid rgba(167,139,250,.4)}
+    .i3{background:linear-gradient(135deg,rgba(56,189,248,.3),rgba(56,189,248,.1));border:1px solid rgba(56,189,248,.4)}
+    .i4{background:linear-gradient(135deg,rgba(52,211,153,.3),rgba(52,211,153,.1));border:1px solid rgba(52,211,153,.4)}
+    .i5{background:linear-gradient(135deg,rgba(245,158,11,.3),rgba(245,158,11,.1));border:1px solid rgba(245,158,11,.4)}
+    .i6{background:linear-gradient(135deg,rgba(244,114,182,.3),rgba(244,114,182,.1));border:1px solid rgba(244,114,182,.4)}
+    .i7{background:linear-gradient(135deg,rgba(251,113,133,.3),rgba(251,113,133,.1));border:1px solid rgba(251,113,133,.4)}
+    .i8{background:linear-gradient(135deg,rgba(20,184,166,.3),rgba(20,184,166,.1));border:1px solid rgba(20,184,166,.4)}
+    .i9{background:linear-gradient(135deg,rgba(251,146,60,.3),rgba(251,146,60,.1));border:1px solid rgba(251,146,60,.4)}
+    .i10{background:linear-gradient(135deg,rgba(34,211,238,.3),rgba(34,211,238,.1));border:1px solid rgba(34,211,238,.4)}
+    .i11{background:linear-gradient(135deg,rgba(163,230,53,.3),rgba(163,230,53,.1));border:1px solid rgba(163,230,53,.4)}
+    .stg{flex:1}.snum{font-size:11px;font-weight:700;letter-spacing:.1em;color:var(--c1);text-transform:uppercase;margin-bottom:3px}.stitle{font-size:1.65rem;font-weight:700;color:#fff;line-height:1.2}
+
+    /* ── CARDS ─────────────────────────────────── */
+    .card{background:var(--bg2);border:1px solid var(--border);border-radius:16px;padding:24px 28px;margin-bottom:18px;transition:border-color .2s,transform .2s}
+    .card:hover{border-color:rgba(99,102,241,.4);transform:translateY(-2px)}
+    .card-title{font-size:1rem;font-weight:700;color:#fff;margin-bottom:10px;display:flex;align-items:center;gap:8px}
+    .card p,.card-body p{color:var(--muted);margin-bottom:8px}.card p:last-child,.card-body p:last-child{margin-bottom:0}
+
+    /* ── GRIDS ─────────────────────────────────── */
+    .g2{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:18px}
+    .g3{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:14px}
+    .g4{display:grid;grid-template-columns:repeat(auto-fit,minmax(190px,1fr));gap:12px}
+
+    /* ── DEFINITION BOX ─────────────────────────── */
+    .def{background:linear-gradient(135deg,rgba(99,102,241,.07),rgba(167,139,250,.04));border:1px solid rgba(99,102,241,.28);border-left:4px solid var(--c1);border-radius:0 12px 12px 0;padding:18px 22px;margin-bottom:18px;color:var(--muted);font-size:14.5px}
+    .def strong{color:var(--c2)}
+
+    /* ── EXAMPLE BOX ─────────────────────────────── */
+    .ex{background:linear-gradient(135deg,rgba(52,211,153,.06),rgba(56,189,248,.04));border:1px solid rgba(52,211,153,.22);border-radius:12px;padding:18px 22px;margin:14px 0;font-size:14px;color:var(--muted)}
+    .ex-label{font-size:11px;font-weight:700;letter-spacing:.1em;color:var(--c4);text-transform:uppercase;margin-bottom:7px;display:flex;align-items:center;gap:6px}
+
+    /* ── TIP ─────────────────────────────────── */
+    .tip{background:rgba(245,158,11,.06);border:1px solid rgba(245,158,11,.22);border-left:4px solid var(--c5);border-radius:0 12px 12px 0;padding:14px 20px;margin:14px 0;color:var(--muted);font-size:14px}
+    .tip strong{color:var(--c5)}
+
+    /* ── WARNING ─────────────────────────────────── */
+    .warn{background:rgba(251,113,133,.06);border:1px solid rgba(251,113,133,.22);border-left:4px solid var(--red);border-radius:0 12px 12px 0;padding:14px 20px;margin:14px 0;color:var(--muted);font-size:14px}
+    .warn strong{color:var(--red)}
+
+    /* ── CODE ─────────────────────────────────── */
+    pre{background:var(--code);border:1px solid rgba(255,255,255,.07);border-radius:12px;padding:18px 22px;overflow-x:auto;margin:14px 0;position:relative}
+    pre::before{content:attr(data-lang);position:absolute;top:9px;right:13px;font-size:10px;font-weight:700;letter-spacing:.08em;color:var(--muted);text-transform:uppercase}
+    code{font-family:'JetBrains Mono',monospace;font-size:12.5px;color:#c9d1d9;line-height:1.65}
+    .kw{color:#ff7b72}.fn{color:#d2a8ff}.st{color:#a5d6ff}.cm{color:#8b949e}.nb{color:#79c0ff}.op{color:#ffa657}
+
+    /* ── TABLE ─────────────────────────────────── */
+    .twrap{overflow-x:auto;margin:14px 0;border-radius:12px;border:1px solid var(--border)}
+    table{width:100%;border-collapse:collapse}
+    th{background:rgba(99,102,241,.12);color:var(--c2);padding:11px 16px;text-align:left;font-size:11.5px;font-weight:700;letter-spacing:.06em;text-transform:uppercase}
+    td{padding:11px 16px;border-top:1px solid var(--border);color:var(--muted);font-size:13px}
+    tr:hover td{background:rgba(255,255,255,.02)}
+    td strong{color:var(--text)}
+
+    /* ── BADGES ─────────────────────────────────── */
+    .b{display:inline-block;padding:2px 10px;border-radius:999px;font-size:11px;font-weight:600;letter-spacing:.04em}
+    .bi{background:rgba(99,102,241,.2);color:var(--c2);border:1px solid rgba(99,102,241,.3)}
+    .bg{background:rgba(52,211,153,.15);color:var(--c4);border:1px solid rgba(52,211,153,.3)}
+    .ba{background:rgba(245,158,11,.15);color:var(--c5);border:1px solid rgba(245,158,11,.3)}
+    .br{background:rgba(251,113,133,.15);color:var(--red);border:1px solid rgba(251,113,133,.3)}
+    .bs{background:rgba(56,189,248,.15);color:var(--c3);border:1px solid rgba(56,189,248,.3)}
+    .bv{background:rgba(167,139,250,.15);color:var(--c2);border:1px solid rgba(167,139,250,.3)}
+
+    /* ── PILL ITEMS ─────────────────────────────── */
+    .pill{display:flex;align-items:flex-start;gap:12px;background:var(--bg3);border:1px solid var(--border);border-radius:12px;padding:14px}
+    .pi{font-size:20px;flex-shrink:0;margin-top:2px}
+    .pt strong{display:block;color:#fff;font-size:13px;font-weight:600;margin-bottom:3px}
+    .pt span{color:var(--muted);font-size:12px}
+
+    /* ── FLOW DIAGRAM ─────────────────────────────── */
+    .flow{display:flex;align-items:center;flex-wrap:wrap;gap:0;margin:18px 0}
+    .fbox{background:var(--bg3);border:1px solid var(--border);border-radius:10px;padding:11px 18px;font-size:13px;font-weight:600;color:#fff;white-space:nowrap}
+    .fbox.a{border-color:var(--c1);color:var(--c2);background:rgba(99,102,241,.1)}
+    .fbox.g{border-color:var(--c4);color:var(--c4);background:rgba(52,211,153,.08)}
+    .farr{padding:0 10px;color:var(--muted);font-size:18px;flex-shrink:0}
+
+    /* ── STEP FLOW ─────────────────────────────── */
+    .stepflow{display:flex;flex-direction:column;gap:4px;margin:16px 0}
+    .step{display:flex;align-items:center;gap:12px;background:var(--bg3);border:1px solid var(--border);border-radius:10px;padding:12px 16px}
+    .step .n{color:var(--c1);font-weight:700;font-size:13px;min-width:22px}
+    .step .nm{font-weight:600;color:#fff;font-size:14px;flex:1}
+    .step .d{color:var(--muted);font-size:12px}
+    .stepconn{padding-left:26px;color:var(--muted);font-size:18px}
+
+    /* ── NUMBERED LIST ─────────────────────────── */
+    .steps{list-style:none;counter-reset:steps}
+    .steps li{counter-increment:steps;display:flex;align-items:flex-start;gap:14px;margin-bottom:12px}
+    .steps li::before{content:counter(steps);width:27px;height:27px;border-radius:8px;background:linear-gradient(135deg,var(--c1),var(--c2));color:#fff;font-size:12px;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:2px}
+    .steps li span{color:var(--muted);line-height:1.65}
+    .steps li span strong{color:var(--text)}
+
+    /* ── CHECK LIST ─────────────────────────────── */
+    .ck{list-style:none}
+    .ck li{display:flex;align-items:flex-start;gap:9px;margin-bottom:9px;color:var(--muted);font-size:14px}
+    .ck li::before{content:'✓';color:var(--c4);font-weight:700;flex-shrink:0;margin-top:2px}
+    .ck li strong{color:var(--text)}
+
+    /* ── MINI CARD ─────────────────────────────── */
+    .mc{background:var(--bg3);border:1px solid var(--border);border-radius:12px;padding:14px 16px}
+    .mc .mt{font-weight:700;font-size:13.5px;margin-bottom:5px;color:var(--c3)}
+    .mc .md{color:var(--muted);font-size:12.5px}
+
+    /* ── DIVIDER ─────────────────────────────────── */
+    .hr{height:1px;background:linear-gradient(90deg,transparent,var(--c1),transparent);margin:60px 0;opacity:.25}
+
+    /* ── NEW BADGE ─────────────────────────────── */
+
+
+    /* ── BACK TO TOP ─────────────────────────────── */
+    #top-btn{position:fixed;bottom:26px;right:26px;width:44px;height:44px;background:var(--c1);border-radius:12px;display:flex;align-items:center;justify-content:center;color:#fff;font-size:20px;text-decoration:none;box-shadow:0 4px 20px rgba(99,102,241,.4);transition:transform .2s,opacity .2s;opacity:0;pointer-events:none}
+    #top-btn.v{opacity:1;pointer-events:auto}
+    #top-btn:hover{transform:translateY(-3px)}
+
+    /* ── RESPONSIVE ─────────────────────────────── */
+    @media(max-width:640px){.g2,.g3,.g4{grid-template-columns:1fr}.flow{flex-direction:column;align-items:flex-start}.farr{transform:rotate(90deg)}}
+  </style>
+</head>
+<body>
+
+<!-- ═══════════ HEADER ═══════════ -->
+<header id="top">
+  <div class="badge">📚 Complete Study Guide · LangChain &amp; GenAI</div>
+  <h1>Generative AI with LangChain</h1>
+  <p>Every topic explained simply — definitions, real-life examples, step-by-step walkthroughs, and code. Your go-to revision guide.</p>
+  <div class="stats">
+    <div class="stat"><div class="n">19</div><div class="l">Topics Covered</div></div>
+    <div class="stat"><div class="n">14</div><div class="l">Folders Analyzed</div></div>
+    <div class="stat"><div class="n">100+</div><div class="l">Real Examples</div></div>
+  </div>
+</header>
+
+<!-- ═══════════ TABLE OF CONTENTS ═══════════ -->
+<nav class="toc">
+  <a href="#s1">1. What is LangChain?</a>
+  <a href="#s2">2. Components</a>
+  <a href="#s3">3. Models</a>
+  <a href="#s4">4. LLMs vs Chat Models</a>
+  <a href="#s5">5. Open-Source Models</a>
+  <a href="#s6">6. Prompts</a>
+  <a href="#s7">7. Prompt Templates</a>
+  <a href="#s8">8. Structured Output</a>
+  <a href="#s9">9. Output Parsers</a>
+  <a href="#s10">10. Chains</a>
+  <a href="#s11">11. Runnables &amp; LCEL</a>
+  <a href="#s12">12. Memory</a>
+  <a href="#s13">13. RAG &amp; Indexes</a>
+  <a href="#s14">14. Document Loaders</a>
+  <a href="#s15">15. Text Splitting</a>
+  <a href="#s16">16. Vector Stores</a>
+  <a href="#s17">17. Retrievers</a>
+  <a href="#s18">18. Agents</a>
+  <a href="#s19">19. Setup Guide</a>
+</nav>
+
+<main>
+
+<!-- ════════════════════════════════════════════
+     SECTION 1 – WHAT IS LANGCHAIN
+═════════════════════════════════════════════ -->
+<section class="section" id="s1">
+  <div class="section-header">
+    <div class="sicon i1">🔗</div>
+    <div class="stg">
+      <div class="snum">Section 01</div>
+      <div class="stitle">What is LangChain?</div>
+    </div>
+  </div>
+
+  <div class="def">
+    <strong>LangChain</strong> is a <strong>free, open-source Python framework</strong> that helps developers build powerful AI applications using Large Language Models (LLMs). It provides ready-made building blocks — Models, Prompts, Chains, Memory, Tools — so you can focus on what your app does instead of writing everything from scratch.
+  </div>
+
+  <div class="ex">
+    <div class="ex-label">🌍 Real-Life Analogy – LEGO Set</div>
+    Think of LangChain like a <strong>LEGO set for AI apps</strong>. LEGO gives you many different types of bricks that snap together perfectly. LangChain gives you ready-made components (Models, Prompts, Chains, Memory, Agents) that snap together to build anything — a customer support bot, a document analyser, a coding assistant, a travel planner.
+  </div>
+
+  <div class="g3" style="margin-bottom:18px">
+    <div class="pill"><div class="pi">🤖</div><div class="pt"><strong>Supports All Major LLMs</strong><span>OpenAI GPT-4, Claude, Gemini, LLaMA, Mistral, and 100+ more</span></div></div>
+    <div class="pill"><div class="pi">🧩</div><div class="pt"><strong>Simplifies Development</strong><span>No need to write API calls by hand. Just compose components.</span></div></div>
+    <div class="pill"><div class="pi">🔌</div><div class="pt"><strong>Rich Integrations</strong><span>Connect to PDFs, websites, SQL databases, Vector DBs, APIs</span></div></div>
+    <div class="pill"><div class="pi">🆓</div><div class="pt"><strong>Open Source &amp; Free</strong><span>No license fees. Huge community. Active development.</span></div></div>
+    <div class="pill"><div class="pi">🔄</div><div class="pt"><strong>Model Agnostic</strong><span>Swap between OpenAI, Anthropic, Gemini without rewriting your app</span></div></div>
+    <div class="pill"><div class="pi">📦</div><div class="pt"><strong>Complete GenAI Ecosystem</strong><span>Covers RAG, Agents, Fine-tuning pipelines, LLMOps</span></div></div>
+  </div>
+
+  <h3 style="color:#fff;margin:26px 0 12px;font-size:1rem">🗺️ Full Learning Roadmap</h3>
+  <div class="g3">
+    <div class="card" style="border-color:rgba(99,102,241,.3)">
+      <div class="card-title">📚 Fundamentals</div>
+      <ul class="ck"><li>LangChain &amp; its components</li><li>Models (LLM, Chat, Embedding)</li><li>Prompts &amp; Templates</li><li>Output Parsers</li><li>Runnables &amp; LCEL</li><li>Chains</li><li>Memory</li></ul>
+    </div>
+    <div class="card" style="border-color:rgba(56,189,248,.3)">
+      <div class="card-title">🔍 RAG (Retrieval)</div>
+      <ul class="ck"><li>Document Loaders</li><li>Text Splitters</li><li>Embeddings</li><li>Vector Stores</li><li>Retrievers</li><li>RAG Pipeline End-to-End</li></ul>
+    </div>
+    <div class="card" style="border-color:rgba(244,114,182,.3)">
+      <div class="card-title">🤖 Agents</div>
+      <ul class="ck"><li>Tools &amp; Toolkits</li><li>Tool Calling</li><li>Building an AI Agent</li></ul>
+    </div>
+  </div>
+
+  <div class="tip"><strong>💡 Why LangChain over building from scratch?</strong> Without LangChain you'd manually handle API calls, format prompts, manage conversation history, connect to databases, parse model outputs — for every single project. LangChain does all that automatically.</div>
+
+  <h3 style="color:#fff;margin:22px 0 12px;font-size:1rem">Alternatives to LangChain</h3>
+  <div class="g2">
+    <div class="card"><div class="card-title">🦙 LlamaIndex</div><p>Best for building complex document retrieval and RAG pipelines. Great when you have structured data hierarchies.</p></div>
+    <div class="card"><div class="card-title">🌾 Haystack</div><p>Production-grade NLP pipelines. Excellent for document search, question answering systems at enterprise scale.</p></div>
+  </div>
+</section>
+
+<div class="hr"></div>
+
+<!-- ════════════════════════════════════════════
+     SECTION 2 – COMPONENTS
+═════════════════════════════════════════════ -->
+<section class="section" id="s2">
+  <div class="section-header">
+    <div class="sicon i2">⚙️</div>
+    <div class="stg"><div class="snum">Section 02</div><div class="stitle">LangChain Components</div></div>
+  </div>
+
+  <p style="color:var(--muted);margin-bottom:22px">LangChain is built from <strong style="color:#fff">6 core building blocks</strong>. Combine them in any order to build any AI application you can imagine.</p>
+
+  <div class="g3">
+    <div class="card" style="border-color:rgba(99,102,241,.35)">
+      <div class="card-title"><span style="color:var(--c1)">①</span> Models</div>
+      <p>The AI brain. Wraps LLMs (OpenAI, Anthropic, Gemini) with a unified interface. You call <code>model.invoke()</code> — LangChain handles the rest.</p>
+    </div>
+    <div class="card" style="border-color:rgba(167,139,250,.35)">
+      <div class="card-title"><span style="color:var(--c2)">②</span> Prompts</div>
+      <p>Dynamic templates with placeholders. Instead of hardcoding "Summarise Cricket", you write "Summarise <code>{topic}</code>" and fill it at runtime.</p>
+    </div>
+    <div class="card" style="border-color:rgba(56,189,248,.35)">
+      <div class="card-title"><span style="color:var(--c3)">③</span> Chains</div>
+      <p>Pipelines that connect multiple steps. Prompt → LLM → Parser. Or Translate → Summarise → Format. All automated.</p>
+    </div>
+    <div class="card" style="border-color:rgba(52,211,153,.35)">
+      <div class="card-title"><span style="color:var(--c4)">④</span> Memory</div>
+      <p>Gives the LLM the ability to remember previous messages in a conversation. Without this, every API call is brand new with no context.</p>
+    </div>
+    <div class="card" style="border-color:rgba(245,158,11,.35)">
+      <div class="card-title"><span style="color:var(--c5)">⑤</span> Indexes</div>
+      <p>Connect your app to external data — PDFs, web pages, databases. Includes Document Loaders, Text Splitters, Embeddings, Vector Stores, Retrievers.</p>
+    </div>
+    <div class="card" style="border-color:rgba(244,114,182,.35)">
+      <div class="card-title"><span style="color:var(--c6)">⑥</span> Agents</div>
+      <p>AI systems that can reason and decide which tools to use. Like a chatbot that can search Google, run code, query databases, and book flights.</p>
+    </div>
+  </div>
+</section>
+
+<div class="hr"></div>
+
+<!-- ════════════════════════════════════════════
+     SECTION 3 – MODELS
+═════════════════════════════════════════════ -->
+<section class="section" id="s3">
+  <div class="section-header">
+    <div class="sicon i3">🧠</div>
+    <div class="stg"><div class="snum">Section 03</div><div class="stitle">Models in LangChain</div></div>
+  </div>
+
+  <div class="def">
+    In LangChain, <strong>Models</strong> are the connectors to AI. There are 3 types: <strong>Language Models</strong> (text in, text out), <strong>Chat Models</strong> (messages in, message out), and <strong>Embedding Models</strong> (text in, vector/numbers out).
+  </div>
+
+  <div class="g3">
+    <div class="card"><div class="card-title">🗣️ Language Models (LLMs)</div><p>Give them any text, they continue or respond in text. Used for general text generation, translation, completion. Example: GPT-3, BLOOM.</p></div>
+    <div class="card"><div class="card-title">💬 Chat Models</div><p>Optimised for conversations. They understand "system", "user", and "assistant" roles. This is what GPT-4, Claude, Gemini use. Modern standard.</p></div>
+    <div class="card"><div class="card-title">📐 Embedding Models</div><p>Convert text into a long list of numbers (a vector) that captures the <em>meaning</em> of the text. Used in semantic search and RAG. Similar text → similar vectors.</p></div>
+  </div>
+
+  <h3 style="color:#fff;margin:22px 0 12px;font-size:1rem">Using Models — Code Examples</h3>
+  <div class="g2">
+    <pre data-lang="Python"><code><span class="cm"># OpenAI GPT-4 via LangChain</span>
+<span class="kw">from</span> langchain_openai <span class="kw">import</span> ChatOpenAI
+<span class="kw">from</span> dotenv <span class="kw">import</span> load_dotenv
+
+load_dotenv()  <span class="cm"># loads OPENAI_API_KEY from .env</span>
+model = <span class="fn">ChatOpenAI</span>(model=<span class="st">'gpt-4'</span>, temperature=<span class="nb">0</span>)
+result = model.<span class="fn">invoke</span>(<span class="st">"What is LangChain?"</span>)
+<span class="fn">print</span>(result.content)</code></pre>
+
+    <pre data-lang="Python"><code><span class="cm"># Google Gemini via LangChain</span>
+<span class="kw">from</span> langchain_google_genai <span class="kw">import</span> ChatGoogleGenerativeAI
+
+model = <span class="fn">ChatGoogleGenerativeAI</span>(
+    model=<span class="st">'gemini-1.5-pro'</span>
+)
+result = model.<span class="fn">invoke</span>(<span class="st">"Explain RAG simply"</span>)
+<span class="fn">print</span>(result.content)</code></pre>
+  </div>
+
+  <h3 style="color:#fff;margin:22px 0 12px;font-size:1rem">⚙️ Temperature — Controlling Creativity</h3>
+  <div class="def"><strong>temperature</strong> is a number (usually 0 to 2) that controls how creative/random the model's output is. <strong>Low = predictable</strong>, <strong>High = creative</strong>.</div>
+  <div class="twrap">
+    <table>
+      <thead><tr><th>Use Case</th><th>Temperature</th><th>Why</th></tr></thead>
+      <tbody>
+        <tr><td><strong>Maths, Code, Facts</strong></td><td><span class="b bs">0.0 – 0.3</span></td><td>You need one correct answer, not creativity</td></tr>
+        <tr><td><strong>General Q&amp;A, Explanations</strong></td><td><span class="b bi">0.5 – 0.7</span></td><td>Balanced — accurate yet natural-sounding</td></tr>
+        <tr><td><strong>Stories, Poems, Creative Writing</strong></td><td><span class="b ba">0.9 – 1.2</span></td><td>High creativity, varied output</td></tr>
+        <tr><td><strong>Brainstorming, Wild Ideas</strong></td><td><span class="b br">1.5+</span></td><td>Maximum randomness, very diverse outputs</td></tr>
+      </tbody>
+    </table>
+  </div>
+  <div class="ex"><div class="ex-label">🌍 Real-Life Analogy</div>Think of temperature like the <strong>creativity dial</strong> on a writer's desk. At 0, the writer writes only confirmed facts. At 1.5, they write wild science fiction. For a bank's FAQ chatbot → temperature 0. For an ad copywriter → temperature 1.0+.</div>
+</section>
+
+<div class="hr"></div>
+
+<!-- ════════════════════════════════════════════
+     SECTION 4 – LLMS VS CHAT MODELS
+═════════════════════════════════════════════ -->
+<section class="section" id="s4">
+  <div class="section-header">
+    <div class="sicon i4">💬</div>
+    <div class="stg"><div class="snum">Section 04</div><div class="stitle">LLMs vs Chat Models — Deep Dive</div></div>
+  </div>
+
+  <div class="def">
+    Both are <strong>Language Models</strong>, but they are trained differently and used differently. <strong>LLMs (Base Models)</strong> just continue text. <strong>Chat Models</strong> are trained for back-and-forth conversation with role awareness.
+  </div>
+
+  <div class="twrap">
+    <table>
+      <thead><tr><th>Feature</th><th>Base LLM</th><th>Chat Model ✅ (Modern Standard)</th></tr></thead>
+      <tbody>
+        <tr><td><strong>What it does</strong></td><td>Continues any text you give it</td><td>Has a full conversation with you, understands context</td></tr>
+        <tr><td><strong>Role Awareness</strong></td><td>None — no concept of "user" or "system"</td><td>Understands "system", "user", "assistant" roles</td></tr>
+        <tr><td><strong>Memory</strong></td><td>No built-in memory — stateless</td><td>Can hold structured conversation history</td></tr>
+        <tr><td><strong>Training</strong></td><td>Trained on raw internet text</td><td>Fine-tuned on human conversations + instructions</td></tr>
+        <tr><td><strong>Best For</strong></td><td>Autocomplete, translations, text generation</td><td>Chatbots, assistants, Q&amp;A, agents</td></tr>
+        <tr><td><strong>Examples</strong></td><td>GPT-3, LLaMA-2-7B, Mistral-7B (base)</td><td>GPT-4, Claude-3, Gemini, LLaMA-2-Chat</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="ex">
+    <div class="ex-label">🌍 Real-Life Analogy</div>
+    A <strong>base LLM</strong> is like a very well-read author who, if you give them the start of a sentence, will complete it — but they don't know who you are or why you're asking.<br><br>
+    A <strong>Chat Model</strong> is like a trained customer service agent. They know: "This is the customer (user). This is my job description (system). My last reply was... (AI message). What should I say next?" — full context awareness.
+  </div>
+</section>
+
+<div class="hr"></div>
+
+<!-- ════════════════════════════════════════════
+     SECTION 5 – OPEN-SOURCE MODELS
+═════════════════════════════════════════════ -->
+<section class="section" id="s5">
+  <div class="section-header">
+    <div class="sicon i5">🦙</div>
+    <div class="stg"><div class="snum">Section 05</div><div class="stitle">Open-Source Models</div></div>
+  </div>
+
+  <div class="def">
+    <strong>Open-source models</strong> are AI models whose weights (the trained parameters) are publicly available. Anyone can <strong>download them, run them locally, fine-tune them</strong> on custom data, or deploy them on their own servers — for free, with no usage fees.
+  </div>
+
+  <div class="g2">
+    <div class="card">
+      <div class="card-title">✅ Open-Source Models</div>
+      <ul class="ck"><li>Free to use — no API cost per token</li><li>Full control — you can modify and fine-tune</li><li>Data Privacy — runs on YOUR servers, data never leaves</li><li>Can deploy offline — works without internet</li></ul>
+    </div>
+    <div class="card">
+      <div class="card-title">💳 Closed-Source Models (OpenAI, Anthropic)</div>
+      <ul class="ck"><li>Pay per API call (per token used)</li><li>No access to model weights — can't modify</li><li>Data is sent to their servers</li><li>Must use their API — no offline option</li></ul>
+    </div>
+  </div>
+
+  <h3 style="color:#fff;margin:22px 0 12px;font-size:1rem">Popular Open-Source Models</h3>
+  <div class="twrap">
+    <table>
+      <thead><tr><th>Model</th><th>Creator</th><th>Size</th><th>Best For</th></tr></thead>
+      <tbody>
+        <tr><td><strong>LLaMA-2 (7B/13B/70B)</strong></td><td>Meta AI</td><td>7–70B params</td><td>General-purpose text generation</td></tr>
+        <tr><td><strong>Mistral-7B</strong></td><td>Mistral AI</td><td>7B params</td><td>Best small model — beats LLaMA-13B in quality</td></tr>
+        <tr><td><strong>Mixtral-8x7B</strong></td><td>Mistral AI</td><td>8×7B (MoE)</td><td>Fast, efficient, high quality</td></tr>
+        <tr><td><strong>Falcon-40B</strong></td><td>TII UAE</td><td>40B params</td><td>High-speed inference tasks</td></tr>
+        <tr><td><strong>BLOOM-176B</strong></td><td>BigScience</td><td>176B params</td><td>Multilingual text in 46 languages</td></tr>
+        <tr><td><strong>DeepSeek</strong></td><td>DeepSeek AI</td><td>Various</td><td>Code generation, reasoning</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="card">
+    <div class="card-title">🤗 HuggingFace — Where to Find Open Models</div>
+    <p><strong>HuggingFace</strong> is the world's largest repository of open-source models. Think of it as "GitHub for AI models". You can:</p>
+    <ul class="ck" style="margin-top:8px">
+      <li><strong>Use via API</strong> — HuggingFace Inference API (free tier available). No GPU needed.</li>
+      <li><strong>Download locally</strong> — Run on your own machine with GPU (transformers library)</li>
+      <li><strong>Integrate with LangChain</strong> — <code>langchain-huggingface</code> package makes it easy</li>
+    </ul>
+  </div>
+</section>
+
+<div class="hr"></div>
+
+<!-- ════════════════════════════════════════════
+     SECTION 6 – PROMPTS
+═════════════════════════════════════════════ -->
+<section class="section" id="s6">
+  <div class="section-header">
+    <div class="sicon i6">✍️</div>
+    <div class="stg"><div class="snum">Section 06</div><div class="stitle">Prompts</div></div>
+  </div>
+
+  <div class="def">
+    A <strong>prompt</strong> is the instruction or question you give to an AI model. The quality of the model's response depends almost entirely on how well you write your prompt. The skill of writing good prompts is called <strong>Prompt Engineering</strong>.
+  </div>
+
+  <div class="g2">
+    <div class="card"><div class="card-title">📝 Text Prompts</div><p>Plain instructions in text: "Summarise this article", "Translate to Hindi", "Write a poem about cricket".</p></div>
+    <div class="card"><div class="card-title">🖼️ Multimodal Prompts</div><p>Prompts with images, audio, or video. E.g., "What is happening in this image?" used with GPT-4V, Gemini Vision.</p></div>
+  </div>
+
+  <h3 style="color:#fff;margin:22px 0 12px;font-size:1rem">3 Types of Prompts in LangChain</h3>
+
+  <div class="card">
+    <div class="card-title">Type 1 — Dynamic Prompt (PromptTemplate)</div>
+    <p>A template with <code>{placeholders}</code> filled in at runtime. Write once, reuse for any input.</p>
+    <pre data-lang="Python"><code><span class="kw">from</span> langchain_core.prompts <span class="kw">import</span> PromptTemplate
+
+<span class="cm"># Define template with placeholders</span>
+prompt = PromptTemplate.<span class="fn">from_template</span>(
+    <span class="st">"Summarise {topic} in a {tone} tone in {words} words."</span>
+)
+
+<span class="cm"># Fill in the values at runtime</span>
+filled = prompt.<span class="fn">format</span>(topic=<span class="st">"Cricket"</span>, tone=<span class="st">"fun"</span>, words=<span class="st">"50"</span>)
+<span class="fn">print</span>(filled)
+<span class="cm"># Output: "Summarise Cricket in a fun tone in 50 words."</span></code></pre>
+  </div>
+
+  <div class="card">
+    <div class="card-title">Type 2 — Chat Prompt (ChatPromptTemplate)</div>
+    <p>Structured prompts for Chat Models with "system", "user", and "AI" roles. This is the modern standard.</p>
+    <pre data-lang="Python"><code><span class="kw">from</span> langchain_core.prompts <span class="kw">import</span> ChatPromptTemplate
+
+chat_prompt = ChatPromptTemplate.<span class="fn">from_messages</span>([
+    (<span class="st">"system"</span>, <span class="st">"You are an expert {profession}."</span>),
+    (<span class="st">"user"</span>, <span class="st">"Tell me about {topic}"</span>),
+])
+
+messages = chat_prompt.<span class="fn">format_messages</span>(
+    profession=<span class="st">"Doctor"</span>,
+    topic=<span class="st">"Viral Fever"</span>
+)</code></pre>
+  </div>
+
+  <div class="card">
+    <div class="card-title">Type 3 — Few-Shot Prompting (FewShotPromptTemplate)</div>
+    <p>You show the model a few examples of the desired pattern, then it applies the same pattern to new input. Like teaching by example.</p>
+    <pre data-lang="Python"><code>examples = [
+    {<span class="st">"input"</span>: <span class="st">"I was charged twice."</span>,      <span class="st">"output"</span>: <span class="st">"Billing Issue"</span>},
+    {<span class="st">"input"</span>: <span class="st">"App crashes on login."</span>,        <span class="st">"output"</span>: <span class="st">"Technical Problem"</span>},
+    {<span class="st">"input"</span>: <span class="st">"How do I upgrade my plan?"</span>,  <span class="st">"output"</span>: <span class="st">"General Inquiry"</span>},
+]
+<span class="cm"># Model now classifies any new customer ticket automatically!</span></code></pre>
+    <div class="ex" style="margin-top:10px"><div class="ex-label">🌍 Real-Life Example</div>This is how companies auto-classify thousands of support tickets. Show 3–4 examples → the LLM labels the next 10,000 correctly, without any training or retraining.</div>
+  </div>
+</section>
+
+<div class="hr"></div>
+
+<!-- ════════════════════════════════════════════
+     SECTION 7 – PROMPT TEMPLATES
+═════════════════════════════════════════════ -->
+<section class="section" id="s7">
+  <div class="section-header">
+    <div class="sicon i8">🎯</div>
+    <div class="stg"><div class="snum">Section 07</div><div class="stitle">Prompt Templates</div></div>
+  </div>
+
+  <div class="def">
+    A <strong>PromptTemplate</strong> is LangChain's way to create prompts that are <em>dynamic, reusable, and validated</em>. Instead of writing different prompts for each user, you define a template once with <code>{variable}</code> placeholders and fill them at runtime.
+  </div>
+
+  <div class="g3">
+    <div class="pill"><div class="pi">✅</div><div class="pt"><strong>Validates Inputs</strong><span>Automatically checks that all required variables are provided. Catches mistakes early.</span></div></div>
+    <div class="pill"><div class="pi">♻️</div><div class="pt"><strong>Reusable</strong><span>Define once, use across the entire app with different inputs.</span></div></div>
+    <div class="pill"><div class="pi">🔗</div><div class="pt"><strong>Composable</strong><span>Chains perfectly with Models, Parsers, and other components using LCEL ( | operator).</span></div></div>
+  </div>
+
+  <h3 style="color:#fff;margin:22px 0 12px;font-size:1rem">Static vs Dynamic Prompts</h3>
+  <div class="g2">
+    <div class="card">
+      <div class="card-title">🔒 Static Prompt (Hardcoded)</div>
+      <p>Same prompt every time. Cannot be reused for different inputs.</p>
+      <pre data-lang="Python"><code><span class="cm"># Bad — hardcoded, not reusable</span>
+prompt = <span class="st">"Summarise the Attention paper in simple terms"</span></code></pre>
+    </div>
+    <div class="card">
+      <div class="card-title">🔄 Dynamic Prompt (Template) ✅</div>
+      <p>Placeholders filled at runtime. Works for any paper, any style.</p>
+      <pre data-lang="Python"><code><span class="cm"># Good — dynamic, reusable</span>
+prompt = <span class="st">"Summarise {paper} in {style} language"</span>
+<span class="cm"># Call with: paper="Attention", style="simple"</span></code></pre>
+    </div>
+  </div>
+
+  <h3 style="color:#fff;margin:22px 0 12px;font-size:1rem">Chat Prompt — Message Types</h3>
+  <div class="g3">
+    <div class="mc"><div class="mt">🔧 System Message</div><div class="md">Sets the AI's persona and rules for the whole conversation. E.g. "You are a helpful doctor. Give simple medical advice only." The AI follows this throughout.</div></div>
+    <div class="mc"><div class="mt">👤 Human Message</div><div class="md">What the user types. E.g. "I have a headache and fever. What should I do?" This is the user's input in the conversation.</div></div>
+    <div class="mc"><div class="mt">🤖 AI Message</div><div class="md">The model's previous response. Used to maintain context in multi-turn conversations. Without this, the model forgets what it said.</div></div>
+  </div>
+
+  <div class="def" style="margin-top:18px"><strong>MessagesPlaceholder</strong> — A special placeholder inside a ChatPromptTemplate that allows you to <em>dynamically insert a list of chat messages</em> (conversation history) at runtime. Essential for building chatbots with memory.</div>
+</section>
+
+<div class="hr"></div>
+
+<!-- ════════════════════════════════════════════
+     SECTION 8 – STRUCTURED OUTPUT
+═════════════════════════════════════════════ -->
+<section class="section" id="s8">
+  <div class="section-header">
+    <div class="sicon i9">📊</div>
+    <div class="stg"><div class="snum">Section 08</div><div class="stitle">Structured Output</div></div>
+  </div>
+
+  <div class="def">
+    By default, LLMs return free-form text. <strong>Structured Output</strong> forces the model to respond in a <em>specific format like JSON</em> — making it easy to use the data in your application, save it to a database, or display it in a UI.
+  </div>
+
+  <div class="g2">
+    <div class="card">
+      <div class="card-title">❌ Without Structured Output (Hard to parse)</div>
+      <p><em>Response:</em> "Here's a one-day Paris itinerary: Morning, visit the Eiffel Tower. Afternoon, explore the Louvre Museum. Evening, dinner on the Seine..."</p>
+      <p style="color:var(--red);font-size:13px">→ Hard to display in a UI, hard to save to database, hard to process</p>
+    </div>
+    <div class="card">
+      <div class="card-title">✅ With Structured Output (Easy to use)</div>
+      <pre data-lang="JSON"><code>[
+  {"time": "Morning",   "activity": "Eiffel Tower"},
+  {"time": "Afternoon", "activity": "Louvre Museum"},
+  {"time": "Evening",   "activity": "Seine dinner"}
+]</code></pre>
+      <p style="color:var(--c4);font-size:13px">→ Easy to display, save, filter, and process!</p>
+    </div>
+  </div>
+
+  <h3 style="color:#fff;margin:22px 0 12px;font-size:1rem">3 Ways to Get Structured Output</h3>
+  <div class="g3">
+    <div class="card" style="border-color:rgba(52,211,153,.35)">
+      <div class="card-title" style="color:var(--c4)">① with_structured_output()</div>
+      <p>Modern LLMs support this natively. Pass a Pydantic schema or TypedDict, and the model returns data in that exact format. No parsing needed!</p>
+    </div>
+    <div class="card" style="border-color:rgba(245,158,11,.35)">
+      <div class="card-title" style="color:var(--c5)">② Output Parsers</div>
+      <p>For older models. The model returns text that looks like JSON, and the parser extracts and validates it for you.</p>
+    </div>
+    <div class="card" style="border-color:rgba(56,189,248,.35)">
+      <div class="card-title" style="color:var(--c3)">③ Pydantic Models</div>
+      <p>Define Python classes with types. LangChain converts the LLM's output into typed, validated Python objects automatically.</p>
+    </div>
+  </div>
+
+  <h3 style="color:#fff;margin:22px 0 12px;font-size:1rem">Pydantic — Data Validation Library</h3>
+  <div class="def"><strong>Pydantic</strong> is a Python library that <em>validates data types automatically</em>. You define what shape your data should be (fields, types, constraints) and Pydantic enforces it. If the LLM returns wrong data, Pydantic catches the error.</div>
+
+  <div class="twrap">
+    <table>
+      <thead><tr><th></th><th>TypedDict</th><th>Pydantic ✅</th><th>JSON Schema</th></tr></thead>
+      <tbody>
+        <tr><td><strong>Type Validation</strong></td><td>Basic (type hints only)</td><td>Full, strict validation</td><td>Schema-based validation</td></tr>
+        <tr><td><strong>Default Values</strong></td><td>❌ No</td><td>✅ Yes</td><td>✅ Yes</td></tr>
+        <tr><td><strong>Field Constraints</strong></td><td>❌ No</td><td>✅ Yes (min, max, regex)</td><td>✅ Yes</td></tr>
+        <tr><td><strong>Use When</strong></td><td>Simple structures, trust LLM</td><td>Need strict validation &amp; safety</td><td>No extra library needed</td></tr>
+      </tbody>
+    </table>
+  </div>
+</section>
+
+<div class="hr"></div>
+
+<!-- ════════════════════════════════════════════
+     SECTION 9 – OUTPUT PARSERS
+═════════════════════════════════════════════ -->
+<section class="section" id="s9">
+  <div class="section-header">
+    <div class="sicon i7">🔧</div>
+    <div class="stg"><div class="snum">Section 09</div><div class="stitle">Output Parsers</div></div>
+  </div>
+
+  <div class="def">
+    <strong>Output Parsers</strong> take the raw text from an LLM and convert it into a <em>clean, usable Python object</em>. Think of them as a translator that converts messy LLM output into structured data your code can work with.
+  </div>
+
+  <div class="g3">
+    <div class="card" style="border-color:rgba(56,189,248,.3)">
+      <div class="card-title">StrOutputParser</div>
+      <p>The simplest parser. Converts the model response into a plain Python string. Use this when you just need the text content.</p>
+      <pre data-lang="Python"><code><span class="kw">from</span> langchain_core.output_parsers <span class="kw">import</span> StrOutputParser
+chain = prompt | model | <span class="fn">StrOutputParser</span>()</code></pre>
+    </div>
+    <div class="card" style="border-color:rgba(52,211,153,.3)">
+      <div class="card-title">JsonOutputParser</div>
+      <p>Parses the LLM response as a JSON dictionary. Great for APIs that need structured data returned.</p>
+      <pre data-lang="Python"><code><span class="kw">from</span> langchain_core.output_parsers <span class="kw">import</span> JsonOutputParser
+chain = prompt | model | <span class="fn">JsonOutputParser</span>()</code></pre>
+    </div>
+    <div class="card" style="border-color:rgba(167,139,250,.3)">
+      <div class="card-title">PydanticOutputParser</div>
+      <p>The most powerful parser. Converts LLM output into a validated Pydantic object. Catches errors if the model returns wrong data.</p>
+      <pre data-lang="Python"><code><span class="kw">from</span> langchain_core.output_parsers <span class="kw">import</span> PydanticOutputParser
+parser = <span class="fn">PydanticOutputParser</span>(pydantic_object=MyModel)
+chain = prompt | model | parser</code></pre>
+    </div>
+  </div>
+
+  <div class="ex">
+    <div class="ex-label">🌍 Real-Life Analogy</div>
+    Output Parsers are like a <strong>hospital data entry clerk</strong>. A doctor writes notes in free-form text: "Patient is 35, has fever 102F, prescribed paracetamol." The clerk reads this and fills a structured form (Name, Age, Temperature, Medication). The parser does exactly this — turns messy LLM text into clean structured data.
+  </div>
+</section>
+
+<div class="hr"></div>
+
+<!-- ════════════════════════════════════════════
+     SECTION 10 – CHAINS
+═════════════════════════════════════════════ -->
+<section class="section" id="s10">
+  <div class="section-header">
+    <div class="sicon i10">⛓️</div>
+    <div class="stg"><div class="snum">Section 10</div><div class="stitle">Chains</div></div>
+  </div>
+
+  <div class="def">
+    A <strong>Chain</strong> is a pipeline that connects multiple AI steps together. The output of step 1 automatically becomes the input of step 2, and so on. This allows complex multi-step workflows to run automatically.
+  </div>
+
+  <div class="ex">
+    <div class="ex-label">🌍 Real-Life Example — Translation + Summarisation</div>
+    <strong>Problem:</strong> You have 1000 English articles and need Hindi summaries.<br>
+    <strong>Without Chain:</strong> Manually copy each article → get Hindi translation → paste into new prompt → get summary → repeat 1000 times!<br>
+    <strong>With Chain:</strong> <code>Input → Translate to Hindi → Summarise → Output</code> — runs automatically for all 1000 articles at once!
+  </div>
+
+  <h3 style="color:#fff;margin:22px 0 12px;font-size:1rem">Visual: Simple Chain</h3>
+  <div class="flow">
+    <div class="fbox">User Input</div><div class="farr">→</div>
+    <div class="fbox a">PromptTemplate</div><div class="farr">→</div>
+    <div class="fbox a">LLM</div><div class="farr">→</div>
+    <div class="fbox a">Output Parser</div><div class="farr">→</div>
+    <div class="fbox g">Final Answer</div>
+  </div>
+
+  <h3 style="color:#fff;margin:22px 0 12px;font-size:1rem">Visual: Sequential Chain (Multi-Step)</h3>
+  <div class="flow">
+    <div class="fbox">Topic</div><div class="farr">→</div>
+    <div class="fbox a">LLM 1: Write Report</div><div class="farr">→</div>
+    <div class="fbox">Report</div><div class="farr">→</div>
+    <div class="fbox a">LLM 2: Summarise</div><div class="farr">→</div>
+    <div class="fbox g">Summary</div>
+  </div>
+
+  <h3 style="color:#fff;margin:22px 0 12px;font-size:1rem">All LangChain Chain Types</h3>
+  <div class="twrap">
+    <table>
+      <thead><tr><th>Chain Name</th><th>What It Does</th></tr></thead>
+      <tbody>
+        <tr><td><strong>LLMChain</strong></td><td>The basic chain — formats a prompt and calls one LLM</td></tr>
+        <tr><td><strong>SequentialChain</strong></td><td>Runs multiple LLM calls one after another; output of each feeds next</td></tr>
+        <tr><td><strong>SimpleSequentialChain</strong></td><td>Easier version of SequentialChain — one input, one output per step</td></tr>
+        <tr><td><strong>ConversationalRetrievalChain</strong></td><td>Q&amp;A with memory + retrieval from documents</td></tr>
+        <tr><td><strong>RetrievalQA</strong></td><td>Fetches relevant documents then answers question using LLM</td></tr>
+        <tr><td><strong>RouterChain</strong></td><td>Routes queries to different chains based on user's intent</td></tr>
+        <tr><td><strong>MultiPromptChain</strong></td><td>Selects which prompt to use based on the type of user input</td></tr>
+        <tr><td><strong>AgentExecutorChain</strong></td><td>Gives an agent tools and lets it decide which to use dynamically</td></tr>
+        <tr><td><strong>SQLDatabaseChain</strong></td><td>Translates natural language to SQL and queries your database</td></tr>
+      </tbody>
+    </table>
+  </div>
+  <div class="tip"><strong>💡 Key Insight:</strong> The real power is that you don't have to manually pass data between steps. LangChain handles all the plumbing automatically.</div>
+</section>
+
+<div class="hr"></div>
+
+<!-- ════════════════════════════════════════════
+     SECTION 11 – RUNNABLES & LCEL
+═════════════════════════════════════════════ -->
+<section class="section" id="s11">
+  <div class="section-header">
+    <div class="sicon i11">🏃</div>
+    <div class="stg"><div class="snum">Section 11</div><div class="stitle">Runnables &amp; LCEL</div></div>
+  </div>
+
+  <div class="def">
+    A <strong>Runnable</strong> is any LangChain component that follows a standard "unit of work" pattern: it takes <strong>input</strong>, does some <strong>processing</strong>, and returns <strong>output</strong>. Every component (prompts, models, parsers, retrievers) is a Runnable, so they all work together seamlessly.
+  </div>
+
+  <h3 style="color:#fff;margin:22px 0 12px;font-size:1rem">The 3 Standard Methods Every Runnable Has</h3>
+  <div class="g3">
+    <div class="pill"><div class="pi">▶️</div><div class="pt"><strong>invoke(input)</strong><span>Run with one input synchronously. Most common. Returns result immediately.</span></div></div>
+    <div class="pill"><div class="pi">📦</div><div class="pt"><strong>batch(inputs)</strong><span>Run on a list of inputs in parallel. More efficient than calling invoke() in a loop.</span></div></div>
+    <div class="pill"><div class="pi">🌊</div><div class="pt"><strong>stream(input)</strong><span>Returns output word-by-word as it's generated. Enables the "typing" effect seen in ChatGPT.</span></div></div>
+  </div>
+
+  <h3 style="color:#fff;margin:22px 0 12px;font-size:1rem">2 Types of Runnables</h3>
+  <div class="g2">
+    <div class="card" style="border-color:rgba(99,102,241,.35)">
+      <div class="card-title" style="color:var(--c2)">Task-Specific Runnables</div>
+      <p>Core LangChain components that do a specific job: <strong>PromptTemplate</strong> (formats prompts), <strong>ChatModel</strong> (calls LLM), <strong>OutputParser</strong> (parses results), <strong>Retriever</strong> (fetches documents). All implement the Runnable interface.</p>
+    </div>
+    <div class="card" style="border-color:rgba(52,211,153,.35)">
+      <div class="card-title" style="color:var(--c4)">Runnable Primitives</div>
+      <p>Building blocks for controlling <em>how</em> Runnables execute — in sequence, in parallel, conditionally. These are the tools for building complex pipelines.</p>
+    </div>
+  </div>
+
+  <h3 style="color:#fff;margin:22px 0 12px;font-size:1rem">Runnable Primitives — All 6 Explained</h3>
+  <div class="twrap">
+    <table>
+      <thead><tr><th>Primitive</th><th>What It Does</th><th>Real-Life Analogy</th></tr></thead>
+      <tbody>
+        <tr><td><strong>RunnableSequence</strong></td><td>Runs steps one after another using <code>|</code> operator</td><td>Assembly line — each station finishes before the next starts</td></tr>
+        <tr><td><strong>RunnableParallel</strong></td><td>Runs multiple steps at the same time</td><td>A kitchen where chef, baker &amp; barista work simultaneously</td></tr>
+        <tr><td><strong>RunnableMap</strong></td><td>Applies the same step to multiple inputs</td><td>A photocopier making multiple copies at once</td></tr>
+        <tr><td><strong>RunnableBranch</strong></td><td>Conditional routing — if X do A, else do B</td><td>Airport check-in: domestic vs international counter</td></tr>
+        <tr><td><strong>RunnableLambda</strong></td><td>Wraps any Python function as a Runnable</td><td>Hiring a freelancer to do a custom job in the pipeline</td></tr>
+        <tr><td><strong>RunnablePassthrough</strong></td><td>Passes input unchanged to the next step</td><td>A transparent pipe — just moves data without touching it</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <h3 style="color:#fff;margin:22px 0 12px;font-size:1rem">LCEL — LangChain Expression Language</h3>
+  <div class="def"><strong>LCEL</strong> uses the <code>|</code> (pipe) operator to chain Runnables together. The output of the left side becomes the input of the right side — like Unix pipes but for AI pipelines.</div>
+
+  <pre data-lang="Python"><code><span class="cm"># Classic LCEL chain — the modern way to build in LangChain</span>
+chain = prompt | model | output_parser
+
+<span class="cm"># One line instead of 3 separate calls:</span>
+result = chain.<span class="fn">invoke</span>({<span class="st">"topic"</span>: <span class="st">"Cricket"</span>, <span class="st">"tone"</span>: <span class="st">"fun"</span>})
+
+<span class="cm"># LangChain automatically does this:</span>
+<span class="cm"># step1 = prompt.invoke({"topic": "Cricket", "tone": "fun"})</span>
+<span class="cm"># step2 = model.invoke(step1)</span>
+<span class="cm"># result = output_parser.invoke(step2)</span></code></pre>
+
+  <div class="ex"><div class="ex-label">🌍 Analogy — Factory Assembly Line</div>LCEL is like a factory conveyor belt. Each Runnable is a machine (station) doing one job. The <code>|</code> operator is the belt that moves items between stations automatically. You don't manually carry products from station to station — it all flows automatically.</div>
+</section>
+
+<div class="hr"></div>
+
+<!-- ════════════════════════════════════════════
+     SECTION 12 – MEMORY
+═════════════════════════════════════════════ -->
+<section class="section" id="s12">
+  <div class="section-header">
+    <div class="sicon i1">🧩</div>
+    <div class="stg"><div class="snum">Section 12</div><div class="stitle">Memory</div></div>
+  </div>
+
+  <div class="def"><strong>LLM API calls are stateless</strong> — every call is completely independent. The model has NO memory of what you said before. LangChain's Memory component stores conversation history and automatically includes it in each new prompt so the model always has full context.</div>
+
+  <div class="g2">
+    <div class="card">
+      <div class="card-title">❌ WITHOUT Memory (Stateless API)</div>
+      <div style="display:flex;flex-direction:column;gap:8px;margin-top:8px">
+        <div class="fbox" style="font-size:12px;text-align:left;background:rgba(251,113,133,.05);border-color:rgba(251,113,133,.3)">"Who is Narendra Modi?" → LLM → "He is the 14th PM of India"</div>
+        <div class="fbox" style="font-size:12px;text-align:left;background:rgba(251,113,133,.05);border-color:rgba(251,113,133,.3)">"How old is he?" → LLM → "I don't have context about who 'he' is" ❌</div>
+      </div>
+      <p style="color:var(--muted);font-size:12px;margin-top:8px">Each call is completely fresh — no memory of the previous message.</p>
+    </div>
+    <div class="card">
+      <div class="card-title">✅ WITH Memory (Stateful)</div>
+      <div style="display:flex;flex-direction:column;gap:8px;margin-top:8px">
+        <div class="fbox" style="font-size:12px;text-align:left;background:rgba(52,211,153,.05);border-color:rgba(52,211,153,.3)">"Who is Narendra Modi?" → LLM → "He is the 14th PM of India"</div>
+        <div class="fbox" style="font-size:12px;text-align:left;background:rgba(52,211,153,.05);border-color:rgba(52,211,153,.3)">"How old is he?" → LLM + [history] → "He was born 17 Sep 1950, so he is 74" ✓</div>
+      </div>
+      <p style="color:var(--muted);font-size:12px;margin-top:8px">Memory injects previous turns — model always has full context.</p>
+    </div>
+  </div>
+
+  <h3 style="color:#fff;margin:22px 0 12px;font-size:1rem">Types of Memory</h3>
+  <div class="g2">
+    <div class="mc"><div class="mt">ConversationBufferMemory</div><div class="md">Stores the FULL transcript of the entire conversation. Simple but grows large quickly and can hit the model's token limit for long chats.</div></div>
+    <div class="mc"><div class="mt">ConversationBufferWindowMemory</div><div class="md">Only keeps the last N messages (a sliding window). Prevents token overflow. Good for most chatbots.</div></div>
+    <div class="mc"><div class="mt">Summariser-Based Memory</div><div class="md">Automatically summarises older parts of the conversation into a short paragraph. Keeps memory compact for very long conversations.</div></div>
+    <div class="mc"><div class="mt">Custom Memory</div><div class="md">For advanced use cases — store specific facts, user preferences, or specialised state in a custom class.</div></div>
+  </div>
+
+  <div class="ex">
+    <div class="ex-label">🌍 Real-Life Analogy</div>
+    Memory is like a <strong>call centre agent's notes</strong>. Without notes (stateless), every time you call back they have no idea who you are. With notes (memory), they say "Ah yes, last time you had a billing issue on Plan X — is that resolved?" Buffer Memory = keeping full call transcript. Window Memory = keeping only the last 5 calls. Summariser Memory = keeping a brief summary of all past interactions.
+  </div>
+</section>
+
+<div class="hr"></div>
+
+<!-- ════════════════════════════════════════════
+     SECTION 13 – RAG & INDEXES
+═════════════════════════════════════════════ -->
+<section class="section" id="s13">
+  <div class="section-header">
+    <div class="sicon i3">🔍</div>
+    <div class="stg"><div class="snum">Section 13</div><div class="stitle">RAG — Retrieval-Augmented Generation</div></div>
+  </div>
+
+  <div class="def">
+    <strong>RAG (Retrieval-Augmented Generation)</strong> is a technique where an LLM retrieves relevant documents from a knowledge base <em>before</em> generating its answer. This grounds the model's response in real, up-to-date data instead of just its training knowledge.
+    <br><br>
+    <strong>3 Benefits of RAG:</strong> (1) Use up-to-date information (2) Better data privacy — your data stays with you (3) No limit on document size
+  </div>
+
+  <div class="ex">
+    <div class="ex-label">🌍 Real-Life Problem RAG Solves</div>
+    Your company has 500-page HR policy documents. ChatGPT doesn't know your company's leave policy.<br>
+    <strong>With RAG:</strong> Upload your PDFs → embed them → store in a vector DB. When an employee asks "What is the notice period?", the system retrieves the exact relevant pages and the LLM uses them to answer accurately. 100% grounded in your real documents.
+  </div>
+
+  <h3 style="color:#fff;margin:22px 0 12px;font-size:1rem">RAG Architecture</h3>
+  <div class="flow">
+    <div class="fbox">Chatbot (ChatGPT)</div><div class="farr">→</div>
+    <div class="fbox a">Current Affairs</div>
+    <div class="farr">&amp;</div>
+    <div class="fbox a">Personal Data</div>
+    <div class="farr">→</div>
+    <div class="fbox g">LLM answers with External Knowledge</div>
+  </div>
+
+  <h3 style="color:#fff;margin:22px 0 12px;font-size:1rem">Step-by-Step RAG Pipeline</h3>
+  <div class="stepflow">
+    <div class="step"><div class="n">1</div><div class="nm">📄 Upload Documents</div><div class="d">PDF, Word, website, CSV stored in AWS S3 or local disk</div></div>
+    <div class="stepconn">↓</div>
+    <div class="step"><div class="n">2</div><div class="nm">📥 Document Loader</div><div class="d">LangChain reads your files into Document objects with page_content + metadata</div></div>
+    <div class="stepconn">↓</div>
+    <div class="step"><div class="n">3</div><div class="nm">✂️ Text Splitter</div><div class="d">Large 500-page document split into small chunks (e.g., 500 characters each)</div></div>
+    <div class="stepconn">↓</div>
+    <div class="step"><div class="n">4</div><div class="nm">🔢 Embedding Model</div><div class="d">Each chunk → Embedding Model → Vector (512 or 1536 numbers that capture meaning)</div></div>
+    <div class="stepconn">↓</div>
+    <div class="step"><div class="n">5</div><div class="nm">💾 Vector Store</div><div class="d">All vectors saved in a vector database (FAISS, ChromaDB, Pinecone)</div></div>
+    <div class="stepconn">↓ ─ Query Time ─ ↓</div>
+    <div class="step"><div class="n">6</div><div class="nm">🔍 Semantic Search</div><div class="d">User asks a question → embed the question → find nearest chunks in vector DB</div></div>
+    <div class="stepconn">↓</div>
+    <div class="step"><div class="n">7</div><div class="nm">🤖 LLM Answers</div><div class="d">Retrieved chunks + user question sent to LLM → Accurate, grounded final answer</div></div>
+  </div>
+
+  <div class="tip"><strong>💡 Why embed?</strong> Embedding converts text to numbers so computers can measure "similarity" mathematically. "King" and "Queen" will have similar embeddings because they have similar meaning. This is how the retrieval step finds relevant chunks.</div>
+</section>
+
+<div class="hr"></div>
+
+<!-- ════════════════════════════════════════════
+     SECTION 14 – DOCUMENT LOADERS (NEW)
+═════════════════════════════════════════════ -->
+<section class="section" id="s14">
+  <div class="section-header">
+    <div class="sicon i5">📥</div>
+    <div class="stg">
+      <div class="snum">Section 14</div>
+      <div class="stitle">Document Loaders</div>
+    </div>
+  </div>
+
+  <div class="def">
+    <strong>Document Loaders</strong> are LangChain components that <em>read data from various sources</em> (PDF, text file, website, CSV, database) and convert them into a standard <strong>Document object</strong> format that can be used for chunking, embedding, retrieval, and generation.
+  </div>
+
+  <div class="card">
+    <div class="card-title">📋 The Document Object Format</div>
+    <p>Every loader converts data into this standard format:</p>
+    <pre data-lang="Python"><code>Document(
+    page_content=<span class="st">"The actual text content of the document..."</span>,
+    metadata={<span class="st">"source"</span>: <span class="st">"filename.pdf"</span>, <span class="st">"page"</span>: <span class="nb">0</span>}
+)</code></pre>
+    <p style="color:var(--muted);font-size:13px;margin-top:8px"><code>page_content</code> = the actual text. <code>metadata</code> = info about where the text came from (file name, page number, URL, etc.)</p>
+  </div>
+
+  <h3 style="color:#fff;margin:22px 0 12px;font-size:1rem">4 Main Document Loaders</h3>
+
+  <div class="g2">
+    <div class="card" style="border-color:rgba(56,189,248,.3)">
+      <div class="card-title" style="color:var(--c3)">📄 TextLoader</div>
+      <p><strong>What it does:</strong> Reads plain <code>.txt</code> files and converts them into a LangChain Document.</p>
+      <p><strong>Use Case:</strong> Chat logs, transcripts, scraped text, code snippets.</p>
+      <p><strong>Limitation:</strong> Only works with <code>.txt</code> files — no PDF, no Word.</p>
+      <pre data-lang="Python"><code><span class="kw">from</span> langchain_community.document_loaders <span class="kw">import</span> TextLoader
+loader = <span class="fn">TextLoader</span>(<span class="st">"chat_history.txt"</span>)
+docs = loader.<span class="fn">load</span>()</code></pre>
+    </div>
+
+    <div class="card" style="border-color:rgba(167,139,250,.3)">
+      <div class="card-title" style="color:var(--c2)">📑 PyPDFLoader</div>
+      <p><strong>What it does:</strong> Reads PDF files. Each page becomes a separate Document object with page number in metadata.</p>
+      <p><strong>Use Case:</strong> Loading textbooks, policy documents, research papers.</p>
+      <p><strong>Limitation:</strong> Uses PyPDF library — not ideal for scanned PDFs or complex table layouts.</p>
+      <pre data-lang="Python"><code><span class="kw">from</span> langchain_community.document_loaders <span class="kw">import</span> PyPDFLoader
+loader = <span class="fn">PyPDFLoader</span>(<span class="st">"company_policy.pdf"</span>)
+docs = loader.<span class="fn">load</span>()
+<span class="cm"># Returns: [Document(page=0,...), Document(page=1,...)]</span></code></pre>
+    </div>
+
+    <div class="card" style="border-color:rgba(52,211,153,.3)">
+      <div class="card-title" style="color:var(--c4)">🌐 WebBaseLoader</div>
+      <p><strong>What it does:</strong> Downloads a web page and extracts its visible text using BeautifulSoup.</p>
+      <p><strong>Use Case:</strong> Loading blog posts, news articles, static websites.</p>
+      <p><strong>Limitation:</strong> Doesn't handle JavaScript-heavy pages (use SeleniumURLLoader for those).</p>
+      <pre data-lang="Python"><code><span class="kw">from</span> langchain_community.document_loaders <span class="kw">import</span> WebBaseLoader
+loader = <span class="fn">WebBaseLoader</span>(<span class="st">"https://en.wikipedia.org/wiki/Cricket"</span>)
+docs = loader.<span class="fn">load</span>()</code></pre>
+    </div>
+
+    <div class="card" style="border-color:rgba(245,158,11,.3)">
+      <div class="card-title" style="color:var(--c5)">📊 CSVLoader</div>
+      <p><strong>What it does:</strong> Reads CSV files into Document objects — by default, one row = one Document.</p>
+      <p><strong>Use Case:</strong> Loading structured data like product catalogues, sales records, survey responses.</p>
+      <pre data-lang="Python"><code><span class="kw">from</span> langchain_community.document_loaders <span class="kw">import</span> CSVLoader
+loader = <span class="fn">CSVLoader</span>(<span class="st">"products.csv"</span>)
+docs = loader.<span class="fn">load</span>()</code></pre>
+    </div>
+  </div>
+
+  <h3 style="color:#fff;margin:22px 0 12px;font-size:1rem">DirectoryLoader — Load Multiple Files at Once</h3>
+  <div class="card">
+    <div class="card-title">📁 DirectoryLoader</div>
+    <p>Loads ALL files from a folder at once using glob patterns. Very useful when you have many documents.</p>
+    <div class="twrap" style="margin:12px 0">
+      <table>
+        <thead><tr><th>Glob Pattern</th><th>What It Loads</th></tr></thead>
+        <tbody>
+          <tr><td><code>"**/*.txt"</code></td><td>All <code>.txt</code> files in all subfolders (recursive)</td></tr>
+          <tr><td><code>"*.pdf"</code></td><td>All <code>.pdf</code> files in the root directory only</td></tr>
+          <tr><td><code>"data/*.csv"</code></td><td>All <code>.csv</code> files inside the <code>data/</code> folder</td></tr>
+          <tr><td><code>"**/*"</code></td><td>ALL files of any type in all subfolders</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <p style="color:var(--muted);font-size:13px"><code>**</code> means "search recursively through all subfolders"</p>
+  </div>
+
+  <h3 style="color:#fff;margin:22px 0 12px;font-size:1rem">load() vs lazy_load() — Which to Use?</h3>
+  <div class="g2">
+    <div class="card" style="border-color:rgba(52,211,153,.3)">
+      <div class="card-title" style="color:var(--c4)">✅ load() — Eager Loading</div>
+      <ul class="ck" style="margin-top:8px">
+        <li>Loads ALL documents into memory immediately</li>
+        <li>Returns a Python <strong>list</strong> of Document objects</li>
+        <li><strong>Use when:</strong> Small number of files, you want everything upfront</li>
+        <li><strong>Risk:</strong> Can run out of memory with very large files</li>
+      </ul>
+    </div>
+    <div class="card" style="border-color:rgba(56,189,248,.3)">
+      <div class="card-title" style="color:var(--c3)">🔄 lazy_load() — Lazy Loading</div>
+      <ul class="ck" style="margin-top:8px">
+        <li>Loads documents <strong>one at a time</strong> as you process them</li>
+        <li>Returns a Python <strong>generator</strong> (not a list)</li>
+        <li><strong>Use when:</strong> Large documents or many files — saves memory</li>
+        <li><strong>Best for:</strong> Streaming, chunking, embedding large datasets</li>
+      </ul>
+    </div>
+  </div>
+
+  <h3 style="color:#fff;margin:22px 0 12px;font-size:1rem">Which PDF Loader to Use?</h3>
+  <div class="twrap">
+    <table>
+      <thead><tr><th>Your PDF Type</th><th>Recommended Loader</th></tr></thead>
+      <tbody>
+        <tr><td><strong>Simple, clean PDFs</strong></td><td><code>PyPDFLoader</code></td></tr>
+        <tr><td><strong>PDFs with tables/columns</strong></td><td><code>PDFPlumberLoader</code></td></tr>
+        <tr><td><strong>Scanned/image PDFs (OCR needed)</strong></td><td><code>UnstructuredPDFLoader</code> or <code>AmazonTextractPDFLoader</code></td></tr>
+        <tr><td><strong>Need layout &amp; image data too</strong></td><td><code>PyMuPDFLoader</code></td></tr>
+        <tr><td><strong>Best structure extraction</strong></td><td><code>UnstructuredPDFLoader</code></td></tr>
+      </tbody>
+    </table>
+  </div>
+</section>
+
+<div class="hr"></div>
+
+<!-- ════════════════════════════════════════════
+     SECTION 15 – TEXT SPLITTING (NEW)
+═════════════════════════════════════════════ -->
+<section class="section" id="s15">
+  <div class="section-header">
+    <div class="sicon i6">✂️</div>
+    <div class="stg">
+      <div class="snum">Section 15</div>
+      <div class="stitle">Text Splitting</div>
+    </div>
+  </div>
+
+  <div class="def">
+    <strong>Text Splitting</strong> is the process of breaking large documents (like 500-page PDFs) into smaller, manageable pieces called <strong>"chunks"</strong>. LLMs have a maximum context length, and embedding models work better with smaller, focused text. Splitting solves both problems.
+  </div>
+
+  <div class="ex">
+    <div class="ex-label">🌍 Why Split? — The Newspaper Analogy</div>
+    A newspaper has 50 pages. If you ask a friend "Tell me about the sports section", you don't give them all 50 pages — you hand them just the sports pages. Text Splitting works the same way: it finds and extracts just the relevant chunks so the LLM only reads what matters. <strong>Smaller = faster + more accurate.</strong>
+  </div>
+
+  <h3 style="color:#fff;margin:22px 0 12px;font-size:1rem">Why Text Splitting Matters</h3>
+  <div class="twrap">
+    <table>
+      <thead><tr><th>Task</th><th>Why Splitting Helps</th></tr></thead>
+      <tbody>
+        <tr><td><strong>Embedding</strong></td><td>Short, focused chunks → more accurate and meaningful vectors</td></tr>
+        <tr><td><strong>Semantic Search</strong></td><td>Search results point to focused info, not an entire chapter</td></tr>
+        <tr><td><strong>Summarisation</strong></td><td>Prevents the model from mixing topics and hallucinating</td></tr>
+        <tr><td><strong>Memory Efficiency</strong></td><td>Smaller chunks = less memory, faster processing, better parallelism</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <h3 style="color:#fff;margin:22px 0 12px;font-size:1rem">4 Types of Text Splitters</h3>
+
+  <div class="g2">
+    <div class="card" style="border-color:rgba(99,102,241,.3)">
+      <div class="card-title" style="color:var(--c2)">① Length-Based Splitting</div>
+      <p><strong>How it works:</strong> Splits text every N characters (or N tokens), regardless of what the text says.</p>
+      <p><strong>Key parameters:</strong></p>
+      <ul class="ck" style="margin-top:6px">
+        <li><code>chunk_size</code> — max characters per chunk</li>
+        <li><code>chunk_overlap</code> — how many characters to share between adjacent chunks (prevents losing context at boundaries)</li>
+      </ul>
+      <pre data-lang="Python"><code><span class="kw">from</span> langchain.text_splitter <span class="kw">import</span> CharacterTextSplitter
+splitter = <span class="fn">CharacterTextSplitter</span>(
+    chunk_size=<span class="nb">500</span>, chunk_overlap=<span class="nb">50</span>
+)
+chunks = splitter.<span class="fn">split_text</span>(long_text)</code></pre>
+      <div class="tip" style="margin-top:8px"><strong>Simple but crude</strong> — can split in the middle of a sentence.</div>
+    </div>
+
+    <div class="card" style="border-color:rgba(52,211,153,.3)">
+      <div class="card-title" style="color:var(--c4)">② Text-Structure Based Splitting</div>
+      <p><strong>How it works:</strong> Splits on natural language boundaries in this priority order:</p>
+      <ul class="ck" style="margin-top:6px">
+        <li><strong>\n\n</strong> — paragraphs (preferred)</li>
+        <li><strong>\n</strong> — new lines</li>
+        <li><strong>" " (space)</strong> — words</li>
+        <li><strong>"" (empty)</strong> — characters (last resort)</li>
+      </ul>
+      <p style="color:var(--muted);font-size:13px;margin-top:8px">This is <code>RecursiveCharacterTextSplitter</code> — the <strong>most recommended splitter</strong> for general use.</p>
+      <pre data-lang="Python"><code><span class="kw">from</span> langchain.text_splitter <span class="kw">import</span> RecursiveCharacterTextSplitter
+splitter = <span class="fn">RecursiveCharacterTextSplitter</span>(
+    chunk_size=<span class="nb">500</span>, chunk_overlap=<span class="nb">50</span>
+)</code></pre>
+    </div>
+
+    <div class="card" style="border-color:rgba(245,158,11,.3)">
+      <div class="card-title" style="color:var(--c5)">③ Document-Structure Based Splitting</div>
+      <p><strong>How it works:</strong> Understands the structure of specific document types — Markdown headings, Python class definitions, HTML tags.</p>
+      <p><strong>Examples:</strong></p>
+      <ul class="ck" style="margin-top:6px">
+        <li><code>MarkdownHeaderTextSplitter</code> — splits at <code>##</code>, <code>###</code> headings</li>
+        <li><code>PythonCodeTextSplitter</code> — splits at class and function boundaries</li>
+        <li><code>HTMLHeaderTextSplitter</code> — splits at HTML header tags</li>
+      </ul>
+      <p style="color:var(--muted);font-size:13px;margin-top:8px">Best when your document has clear logical sections (code files, documentation).</p>
+    </div>
+
+    <div class="card" style="border-color:rgba(244,114,182,.3)">
+      <div class="card-title" style="color:var(--c6)">④ Semantic Meaning Based Splitting</div>
+      <p><strong>How it works:</strong> Uses an embedding model to detect topic changes. When the semantic similarity between two adjacent sentences drops significantly, it creates a chunk boundary there.</p>
+      <p><strong>Example:</strong> A document talking about "farming" for 3 paragraphs then switching to "cricket" — semantic splitter detects this topic shift and creates a new chunk at the boundary.</p>
+      <p style="color:var(--muted);font-size:13px;margin-top:8px">Most intelligent, but slower. Use when content quality matters most.</p>
+    </div>
+  </div>
+</section>
+
+<div class="hr"></div>
+
+<!-- ════════════════════════════════════════════
+     SECTION 16 – VECTOR STORES (NEW)
+═════════════════════════════════════════════ -->
+<section class="section" id="s16">
+  <div class="section-header">
+    <div class="sicon i9">💾</div>
+    <div class="stg">
+      <div class="snum">Section 16</div>
+      <div class="stitle">Vector Stores</div>
+    </div>
+  </div>
+
+  <div class="def">
+    A <strong>Vector Store</strong> is a database designed to <em>store and search through vectors (embeddings)</em> very efficiently. When you embed your documents, you store those vectors here. When a user asks a question, you embed the question and find the most similar vectors in the store — those are your most relevant documents.
+  </div>
+
+  <div class="ex">
+    <div class="ex-label">🌍 Real-Life Analogy — The Library Card Catalogue</div>
+    Before computers, libraries had card catalogues — one index card per book, with keywords. To find books about "cricket", you look up "cricket" in the catalogue and it points you to the right shelves.<br><br>
+    A Vector Store is a <strong>semantic card catalogue</strong>. Instead of exact keywords, it understands meaning. If you search for "batting technique", it also finds books about "batting stance", "shot selection", "run scoring" — because they're semantically similar.
+  </div>
+
+  <h3 style="color:#fff;margin:22px 0 12px;font-size:1rem">Key Features of Vector Stores</h3>
+  <div class="g4">
+    <div class="mc"><div class="mt">💾 Storage</div><div class="md">Stores vectors + associated text chunks + metadata. Can be in-memory or on-disk.</div></div>
+    <div class="mc"><div class="mt">🔍 Similarity Search</div><div class="md">Given a query vector, finds the K nearest stored vectors using cosine similarity or L2 distance.</div></div>
+    <div class="mc"><div class="mt">📑 Indexing</div><div class="md">Special data structures (ANN indexes) enable fast search over millions of vectors in milliseconds.</div></div>
+    <div class="mc"><div class="mt">✏️ CRUD Ops</div><div class="md">Add new vectors, update existing, delete old — manage the lifecycle of your vector data.</div></div>
+  </div>
+
+  <h3 style="color:#fff;margin:22px 0 12px;font-size:1rem">Vector Store vs Vector Database</h3>
+  <div class="g2">
+    <div class="card" style="border-color:rgba(56,189,248,.3)">
+      <div class="card-title" style="color:var(--c3)">Vector Store (e.g., FAISS)</div>
+      <ul class="ck" style="margin-top:8px">
+        <li>Lightweight library for storing &amp; searching vectors</li>
+        <li>No full database features (no transactions, no auth)</li>
+        <li>Ideal for prototyping and small-to-medium scale</li>
+        <li>You manage persistence (save/load manually)</li>
+        <li><strong>Examples:</strong> FAISS, SimpleVectorStore</li>
+      </ul>
+    </div>
+    <div class="card" style="border-color:rgba(167,139,250,.3)">
+      <div class="card-title" style="color:var(--c2)">Vector Database (e.g., Pinecone, Qdrant)</div>
+      <ul class="ck" style="margin-top:8px">
+        <li>Full database system — distributed, persistent, scalable</li>
+        <li>ACID transactions, backup/restore, authentication</li>
+        <li>Metadata filtering, concurrent access, horizontal scaling</li>
+        <li>Production-ready for large-scale apps</li>
+        <li><strong>Examples:</strong> Pinecone, Qdrant, Milvus, Weaviate</li>
+      </ul>
+    </div>
+  </div>
+  <div class="tip"><strong>💡 Rule of Thumb:</strong> For learning and prototyping → use FAISS (local, free). For production apps with millions of documents → use Pinecone or Qdrant.</div>
+
+  <h3 style="color:#fff;margin:22px 0 12px;font-size:1rem">Chroma Vector Store</h3>
+  <div class="def"><strong>ChromaDB</strong> is a lightweight, open-source vector database that's especially friendly for local development. It's the most commonly used vector store when learning LangChain.</div>
+  <div class="card">
+    <div class="card-title">Chroma DB Hierarchy</div>
+    <p style="color:var(--muted);font-size:13px;margin-bottom:12px">Chroma organises data like a real database:</p>
+    <div class="flow" style="flex-direction:column;align-items:flex-start;gap:6px">
+      <div class="fbox a">Tenant (your app)</div>
+      <div class="stepconn">↓ has many</div>
+      <div class="fbox" style="margin-left:20px">Databases</div>
+      <div class="stepconn" style="margin-left:20px">↓ has many</div>
+      <div class="fbox" style="margin-left:40px">Collections (like tables)</div>
+      <div class="stepconn" style="margin-left:40px">↓ has many</div>
+      <div class="fbox g" style="margin-left:60px">Documents (chunks + vectors + metadata)</div>
+    </div>
+    <pre data-lang="Python" style="margin-top:14px"><code><span class="kw">from</span> langchain_chroma <span class="kw">import</span> Chroma
+<span class="kw">from</span> langchain_openai <span class="kw">import</span> OpenAIEmbeddings
+
+<span class="cm"># Create vector store from documents</span>
+vectorstore = Chroma.<span class="fn">from_documents</span>(
+    documents=chunks,
+    embedding=<span class="fn">OpenAIEmbeddings</span>()
+)
+<span class="cm"># Search for similar documents</span>
+results = vectorstore.<span class="fn">similarity_search</span>(<span class="st">"What is the leave policy?"</span>, k=<span class="nb">3</span>)</code></pre>
+  </div>
+
+  <h3 style="color:#fff;margin:22px 0 12px;font-size:1rem">Use Cases for Vector Stores</h3>
+  <div class="g4">
+    <div class="mc"><div class="mt">🔍 Semantic Search</div><div class="md">Find documents by meaning, not just keyword match. "car" finds "automobile" results too.</div></div>
+    <div class="mc"><div class="mt">📚 RAG Applications</div><div class="md">Find relevant document chunks to give LLM as context before it answers.</div></div>
+    <div class="mc"><div class="mt">🎬 Recommender Systems</div><div class="md">Find movies/products similar to what user liked based on embedding similarity.</div></div>
+    <div class="mc"><div class="mt">🖼️ Multimedia Search</div><div class="md">Search images, audio, or video using their embedded representations.</div></div>
+  </div>
+</section>
+
+<div class="hr"></div>
+
+<!-- ════════════════════════════════════════════
+     SECTION 17 – RETRIEVERS (NEW)
+═════════════════════════════════════════════ -->
+<section class="section" id="s17">
+  <div class="section-header">
+    <div class="sicon i8">🔎</div>
+    <div class="stg">
+      <div class="snum">Section 17</div>
+      <div class="stitle">Retrievers</div>
+    </div>
+  </div>
+
+  <div class="def">
+    A <strong>Retriever</strong> in LangChain is a component that <em>fetches relevant documents from a data source</em> based on a user's query. It sits between the user's question and the LLM — its job is to find the most relevant pieces of information to give to the model. <strong>All retrievers in LangChain are Runnables.</strong>
+  </div>
+
+  <div class="ex">
+    <div class="ex-label">🌍 Analogy — Research Assistant</div>
+    A Retriever is like a <strong>research assistant</strong> in a library. You tell them what topic you're researching. They go to the shelves, pull out the 5 most relevant books, and hand them to you. You (the LLM) then read those books to answer the question — you don't read all 10,000 books in the library.
+  </div>
+
+  <h3 style="color:#fff;margin:22px 0 12px;font-size:1rem">Types of Retrievers</h3>
+
+  <div class="g2">
+    <div class="card" style="border-color:rgba(56,189,248,.3)">
+      <div class="card-title" style="color:var(--c3)">1. Vector Store Retriever</div>
+      <p>The most common retriever. Converts your vector store into a retriever object. When you call it with a query, it performs semantic search and returns the top-K most similar documents.</p>
+      <pre data-lang="Python"><code><span class="cm"># Convert vectorstore to retriever</span>
+retriever = vectorstore.<span class="fn">as_retriever</span>(
+    search_type=<span class="st">"similarity"</span>,
+    search_kwargs={<span class="st">"k"</span>: <span class="nb">3</span>}  <span class="cm"># Return top 3 docs</span>
+)
+docs = retriever.<span class="fn">invoke</span>(<span class="st">"What is the notice period?"</span>)</code></pre>
+    </div>
+
+    <div class="card" style="border-color:rgba(52,211,153,.3)">
+      <div class="card-title" style="color:var(--c4)">2. Wikipedia Retriever</div>
+      <p>Queries the Wikipedia API to fetch relevant articles for a given topic. Returns content as LangChain Document objects — no local data needed!</p>
+      <ol class="steps" style="margin-top:10px">
+        <li><span>You give it a query (e.g., "Albert Einstein")</span></li>
+        <li><span>It sends the query to Wikipedia's API</span></li>
+        <li><span>Wikipedia returns the most relevant articles</span></li>
+        <li><span>They are returned as LangChain Document objects</span></li>
+      </ol>
+      <pre data-lang="Python"><code><span class="kw">from</span> langchain_community.retrievers <span class="kw">import</span> WikipediaRetriever
+retriever = <span class="fn">WikipediaRetriever</span>()
+docs = retriever.<span class="fn">invoke</span>(<span class="st">"Albert Einstein"</span>)</code></pre>
+    </div>
+
+    <div class="card" style="border-color:rgba(245,158,11,.3)">
+      <div class="card-title" style="color:var(--c5)">3. MMR Retriever (Maximal Marginal Relevance)</div>
+      <p><strong>Problem with regular search:</strong> If you ask about "climate change", regular similarity search might return D1, D2, D3 — all about "Arctic glaciers melting". You get 3 nearly identical results!</p>
+      <p style="margin-top:8px"><strong>MMR solves this:</strong> It picks results that are <em>relevant to your query AND different from each other</em>. So you'd get D1 (glaciers), D4 (wildfires), D5 (sea levels) — diverse but all relevant.</p>
+      <div class="g2" style="margin-top:10px;gap:10px">
+        <div style="background:rgba(251,113,133,.08);border:1px solid rgba(251,113,133,.2);border-radius:8px;padding:10px;font-size:12px">
+          <strong style="color:var(--red)">Regular Search (Bad)</strong><br>
+          1. D1: Arctic glaciers melting<br>
+          2. D2: Arctic glaciers melting<br>
+          3. D3: Deforestation in Amazon
+        </div>
+        <div style="background:rgba(52,211,153,.06);border:1px solid rgba(52,211,153,.2);border-radius:8px;padding:10px;font-size:12px">
+          <strong style="color:var(--c4)">MMR Search (Better) ✓</strong><br>
+          1. D1: Arctic glaciers melting<br>
+          2. D4: Wildfires in California<br>
+          3. D5: Sea levels in Mumbai &amp; New York
+        </div>
+      </div>
+      <pre data-lang="Python"><code>retriever = vectorstore.<span class="fn">as_retriever</span>(
+    search_type=<span class="st">"mmr"</span>,
+    search_kwargs={<span class="st">"k"</span>: <span class="nb">3</span>, <span class="st">"fetch_k"</span>: <span class="nb">10</span>}
+)</code></pre>
+    </div>
+
+    <div class="card" style="border-color:rgba(167,139,250,.3)">
+      <div class="card-title" style="color:var(--c2)">4. Contextual Compression Retriever</div>
+      <p><strong>Problem:</strong> A regular retriever returns entire document chunks — even if only 1 sentence is relevant to the query. This wastes the LLM's context window.</p>
+      <p style="margin-top:8px"><strong>Solution:</strong> Contextual Compression Retriever retrieves documents AND then uses an LLM to compress each document — keeping ONLY the parts relevant to the query.</p>
+      <div class="card" style="background:rgba(167,139,250,.05);border-color:rgba(167,139,250,.2);margin-top:10px">
+        <p style="font-size:13px"><strong>Example:</strong><br>Query: "What is photosynthesis?"<br>Retrieved doc: "The Grand Canyon is famous. <em>Photosynthesis is how plants convert light into energy.</em> Many tourists visit."<br>After compression: <code>"Photosynthesis is how plants convert light into energy."</code> ✓</p>
+      </div>
+      <h4 style="color:#fff;font-size:13px;margin:12px 0 8px">How It Works (Step by Step):</h4>
+      <ol class="steps">
+        <li><span><strong>Base Retriever</strong> (FAISS, Chroma) fetches N documents normally</span></li>
+        <li><span><strong>Compressor</strong> (usually an LLM) reads each document</span></li>
+        <li><span>Compressor keeps <strong>only the parts relevant to the query</strong></span></li>
+        <li><span>Irrelevant content is discarded</span></li>
+      </ol>
+      <p style="color:var(--c5);font-size:12px;margin-top:8px"><strong>Use when:</strong> Documents are long &amp; mixed, you want to reduce context length, and you need to improve answer accuracy in RAG.</p>
+    </div>
+  </div>
+</section>
+
+<div class="hr"></div>
+
+<!-- ════════════════════════════════════════════
+     SECTION 18 – AGENTS
+═════════════════════════════════════════════ -->
+<section class="section" id="s18">
+  <div class="section-header">
+    <div class="sicon i2">🤖</div>
+    <div class="stg"><div class="snum">Section 18</div><div class="stitle">Agents</div></div>
+  </div>
+
+  <div class="def">
+    An <strong>AI Agent</strong> = LLM + <strong>Reasoning Capability</strong> + <strong>Tools</strong>. It's an AI system that can think about what to do, call real-world tools to get information or take actions, observe the results, and repeat until the task is complete — all autonomously.
+  </div>
+
+  <div class="g2">
+    <div class="card">
+      <div class="card-title">🗣️ Normal Chatbot</div>
+      <p>Can only generate text. If you ask "What is the weather in Delhi right now?" → "I'm sorry, I don't have access to real-time data." ❌</p>
+    </div>
+    <div class="card">
+      <div class="card-title">🤖 AI Agent</div>
+      <p>Can call tools. "What is the weather in Delhi?" → calls Weather API → "It is 34°C and sunny in Delhi right now." ✅</p>
+    </div>
+  </div>
+
+  <div class="ex">
+    <div class="ex-label">🌍 Real-Life Example — Travel Booking Agent</div>
+    User says: "Find me the cheapest flight to Shimla in January and book it."<br><br>
+    The Agent thinks → calls Flight Search Tool → finds options → calls Price Comparison Tool → selects cheapest (₹2,450 on 24th Jan) → shows user for confirmation → calls Payment API → books the flight! <strong>All automatically.</strong>
+  </div>
+
+  <h3 style="color:#fff;margin:22px 0 12px;font-size:1rem">Agent Architecture</h3>
+  <div class="flow">
+    <div class="fbox">User Request</div><div class="farr">→</div>
+    <div class="fbox a">LLM Reasons: "What tool do I need?"</div><div class="farr">→</div>
+    <div class="fbox a">Calls Tool (API, DB, Search)</div><div class="farr">→</div>
+    <div class="fbox">Observes Result</div><div class="farr">→</div>
+    <div class="fbox a">Reason Again</div><div class="farr">→</div>
+    <div class="fbox g">Task Complete ✓</div>
+  </div>
+  <p style="color:var(--muted);font-size:13px;margin-top:8px">This Reason → Act → Observe loop repeats until the task is fully done. This is called the <strong>ReAct pattern</strong>.</p>
+
+  <h3 style="color:#fff;margin:22px 0 12px;font-size:1rem">Common Agent Tools</h3>
+  <div class="g4">
+    <div class="mc"><div class="mt">🔢 Calculator</div><div class="md">Performs mathematical calculations. Avoids the model hallucinating maths answers.</div></div>
+    <div class="mc"><div class="mt">🔍 Google Search</div><div class="md">Searches the web for real-time, up-to-date information.</div></div>
+    <div class="mc"><div class="mt">🗄️ SQL Tool</div><div class="md">Queries your database with natural language — no SQL knowledge required from the user.</div></div>
+    <div class="mc"><div class="mt">🌐 Wikipedia</div><div class="md">Fetches Wikipedia articles as context for factual questions.</div></div>
+    <div class="mc"><div class="mt">🐍 Python REPL</div><div class="md">Executes Python code — useful for data analysis, file processing.</div></div>
+    <div class="mc"><div class="mt">🛠️ Custom Tools</div><div class="md">Any Python function you write can become a tool (call an API, send an email, etc.).</div></div>
+  </div>
+</section>
+
+<div class="hr"></div>
+
+<!-- ════════════════════════════════════════════
+     SECTION 19 – SETUP GUIDE
+═════════════════════════════════════════════ -->
+<section class="section" id="s19">
+  <div class="section-header">
+    <div class="sicon i4">🚀</div>
+    <div class="stg"><div class="snum">Section 19</div><div class="stitle">Setup Guide — Step by Step</div></div>
+  </div>
+
+  <h3 style="color:#fff;margin:0 0 16px;font-size:1rem">Project Setup Steps</h3>
+  <ol class="steps">
+    <li><span><strong>Create a project folder</strong> — Give it a meaningful name like <code>my_langchain_app</code></span></li>
+    <li><span><strong>Open in VS Code</strong> — File → Open Folder → select your new folder</span></li>
+    <li><span><strong>Open the terminal</strong> in VS Code — View → Terminal (or Ctrl+`)</span></li>
+    <li><span><strong>Create a virtual environment</strong> — <code>python -m venv venv</code></span></li>
+    <li><span><strong>Activate the venv</strong>:<br>Windows: <code>venv\Scripts\Activate</code><br>Mac/Linux: <code>source venv/bin/activate</code></span></li>
+    <li><span><strong>Create <code>requirements.txt</code></strong> with the packages below</span></li>
+    <li><span><strong>Install packages</strong> — <code>pip install -r requirements.txt</code></span></li>
+    <li><span><strong>Create a <code>.env</code> file</strong> and add your API keys (see below)</span></li>
+    <li><span><strong>Verify installation</strong> — <code>python -c "import langchain; print(langchain.__version__)"</code></span></li>
+  </ol>
+
+  <div class="g2" style="margin-top:18px">
+    <div>
+      <h3 style="color:#fff;margin:0 0 12px;font-size:1rem">📦 requirements.txt</h3>
+      <pre data-lang="text"><code><span class="cm"># ── LangChain Core ──</span>
+langchain
+langchain-core
+langchain-community
+
+<span class="cm"># ── LLM Providers ──</span>
+langchain-openai      <span class="cm"># GPT-4, GPT-3.5</span>
+langchain-anthropic   <span class="cm"># Claude</span>
+langchain-google-genai <span class="cm"># Gemini</span>
+langchain-huggingface <span class="cm"># Open-source models</span>
+
+<span class="cm"># ── RAG Dependencies ──</span>
+chromadb              <span class="cm"># Vector store</span>
+faiss-cpu             <span class="cm"># Alternative vector store</span>
+pypdf                 <span class="cm"># PDF loading</span>
+beautifulsoup4        <span class="cm"># Web loading</span>
+
+<span class="cm"># ── Utilities ──</span>
+python-dotenv         <span class="cm"># API key management</span>
+pydantic              <span class="cm"># Data validation</span></code></pre>
+    </div>
+    <div>
+      <h3 style="color:#fff;margin:0 0 12px;font-size:1rem">🔑 .env file (API Keys)</h3>
+      <pre data-lang="env"><code><span class="cm"># Never commit this file to Git!</span>
+OPENAI_API_KEY=sk-...
+ANTHROPIC_API_KEY=sk-ant-...
+GOOGLE_API_KEY=AI...
+HUGGINGFACEHUB_API_TOKEN=hf_...</code></pre>
+
+      <h3 style="color:#fff;margin:14px 0 12px;font-size:1rem">📂 Load API Keys in Code</h3>
+      <pre data-lang="Python"><code><span class="kw">from</span> dotenv <span class="kw">import</span> load_dotenv
+<span class="kw">import</span> os
+
+load_dotenv()  <span class="cm"># reads your .env file</span>
+key = os.<span class="fn">getenv</span>(<span class="st">"OPENAI_API_KEY"</span>)</code></pre>
+    </div>
+  </div>
+
+  <div class="warn"><strong>⚠️ Security Warning:</strong> NEVER hardcode API keys in your Python files. Always use <code>.env</code> files. Add <code>.env</code> to your <code>.gitignore</code> file so it's never accidentally pushed to GitHub.</div>
+  <div class="tip"><strong>💡 Pro Tip:</strong> Create a <code>.gitignore</code> file in your project and add these lines: <code>.env</code>, <code>venv/</code>, <code>__pycache__/</code>, <code>*.pyc</code>. This keeps your sensitive files and junk files out of version control.</div>
+</section>
+
+<!-- ─── FOOTER ─── -->
+<div style="text-align:center;padding:48px 0 20px;color:var(--muted);font-size:13px;border-top:1px solid var(--border)">
+  <p style="margin-bottom:8px;font-size:1.1rem">📚 <strong style="color:#fff">GenAI &amp; LangChain — Complete Study Guide</strong></p>
+  <p>19 Topics · From Fundamentals → Document Loaders → Text Splitting → Vector Stores → Retrievers → Agents</p>
+  <p style="margin-top:8px;color:rgba(148,163,184,.5)">Based on your OneNote screenshots · Built for revision &amp; deep understanding</p>
+</div>
+
+</main>
+
+<!-- Back to Top -->
+<a href="#top" id="top-btn" title="Back to Top">↑</a>
+
+<script>
+  // Back to top
+  const btn = document.getElementById('top-btn');
+  window.addEventListener('scroll', () => btn.classList.toggle('v', window.scrollY > 400));
+
+  // Fade-in sections on scroll
+  const secs = document.querySelectorAll('.section');
+  const io = new IntersectionObserver(entries => {
+    entries.forEach(e => {
+      if (e.isIntersecting) {
+        e.target.style.opacity = '1';
+        e.target.style.transform = 'translateY(0)';
+      }
+    });
+  }, { threshold: 0.04 });
+
+  secs.forEach(s => {
+    s.style.opacity = '0';
+    s.style.transform = 'translateY(24px)';
+    s.style.transition = 'opacity .5s ease, transform .5s ease';
+    io.observe(s);
+  });
+</script>
+</body>
+</html>
