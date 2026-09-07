@@ -167,7 +167,7 @@
   <h1>Generative AI with LangChain</h1>
   <p>Every topic explained simply — definitions, real-life examples, step-by-step walkthroughs, and code. Your go-to revision guide.</p>
   <div class="stats">
-    <div class="stat"><div class="n">19</div><div class="l">Topics Covered</div></div>
+    <div class="stat"><div class="n">22</div><div class="l">Topics Covered</div></div>
     <div class="stat"><div class="n">14</div><div class="l">Folders Analyzed</div></div>
     <div class="stat"><div class="n">100+</div><div class="l">Real Examples</div></div>
   </div>
@@ -192,8 +192,11 @@
   <a href="#s15">15. Text Splitting</a>
   <a href="#s16">16. Vector Stores</a>
   <a href="#s17">17. Retrievers</a>
-  <a href="#s18">18. Agents</a>
-  <a href="#s19">19. Setup Guide</a>
+  <a href="#s18">18. Tools</a>
+  <a href="#s19">19. Tool Calling</a>
+  <a href="#s20">20. AI Agents Deep Dive</a>
+  <a href="#s21">21. Agents Quick Ref</a>
+  <a href="#s22">22. Setup Guide</a>
 </nav>
 
 <main>
@@ -1299,8 +1302,274 @@ docs = retriever.<span class="fn">invoke</span>(<span class="st">"Albert Einstei
 ═════════════════════════════════════════════ -->
 <section class="section" id="s18">
   <div class="section-header">
+    <div class="sicon i5">🔧</div>
+    <div class="stg"><div class="snum">Section 18</div><div class="stitle">Tools in LangChain</div></div>
+  </div>
+
+  <div class="def">
+    A <strong>Tool</strong> is just a Python function (or API) packaged so the LLM can understand and call it when needed. Tools give the LLM superpowers — fetch live data, run code, call APIs, query databases.
+  </div>
+
+  <div class="g2">
+    <div class="card" style="border-color:rgba(52,211,153,.3)">
+      <div class="card-title" style="color:var(--c4)">✅ What LLMs CAN do</div>
+      <ul class="ck" style="margin-top:8px">
+        <li><strong>Reasoning</strong> — Think through a problem step by step</li>
+        <li><strong>Language Generation</strong> — Write, translate, summarise, converse</li>
+      </ul>
+    </div>
+    <div class="card" style="border-color:rgba(251,113,133,.3)">
+      <div class="card-title" style="color:var(--red)">❌ What LLMs CANNOT do (without Tools)</div>
+      <ul class="ck" style="margin-top:8px">
+        <li>Access live data (weather, stock prices, news)</li>
+        <li>Do reliable maths — they hallucinate calculations!</li>
+        <li>Call external APIs or services</li>
+        <li>Run code or shell commands</li>
+        <li>Interact with a database</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="ex">
+    <div class="ex-label">🌍 Analogy — Smart Intern</div>
+    An LLM is like a brilliant intern who can write and reason perfectly, but cannot drive, make phone calls, or access the company database. <strong>Tools</strong> are like giving them a company phone, car keys, and database login. Now they can DO things, not just think about them.
+  </div>
+
+  <h3 style="color:#fff;margin:26px 0 12px;font-size:1rem">Agent = Brain + Hands</h3>
+  <div class="g2" style="margin-bottom:20px">
+    <div style="background:rgba(52,211,153,.06);border:1px solid rgba(52,211,153,.2);border-radius:10px;padding:16px;text-align:center">
+      <div style="font-size:1.4rem;margin-bottom:6px">🧠</div>
+      <strong style="color:var(--c4)">LLM (Reasoning)</strong>
+      <p style="color:var(--muted);font-size:12px;margin-top:6px">Thinks, plans, decides what to do next</p>
+    </div>
+    <div style="background:rgba(245,158,11,.06);border:1px solid rgba(245,158,11,.2);border-radius:10px;padding:16px;text-align:center">
+      <div style="font-size:1.4rem;margin-bottom:6px">🛠️</div>
+      <strong style="color:var(--c5)">Tools (Action)</strong>
+      <p style="color:var(--muted);font-size:12px;margin-top:6px">Actually does the work in the real world</p>
+    </div>
+  </div>
+
+  <h3 style="color:#fff;margin:0 0 16px;font-size:1rem">2 Types of Tools</h3>
+  <div class="g2">
+    <div class="card" style="border-color:rgba(56,189,248,.35)">
+      <div class="card-title" style="color:var(--c3)">① Built-in Tools</div>
+      <p>Tools LangChain already provides — pre-built, production-ready, minimal setup. Just import and use.</p>
+      <div class="twrap" style="margin-top:12px">
+        <table>
+          <thead><tr><th>Tool Name</th><th>What It Does</th></tr></thead>
+          <tbody>
+            <tr><td><code>DuckDuckGoSearchRun</code></td><td>Web search via DuckDuckGo</td></tr>
+            <tr><td><code>WikipediaQueryRun</code></td><td>Wikipedia summary lookup</td></tr>
+            <tr><td><code>PythonREPLTool</code></td><td>Run raw Python code</td></tr>
+            <tr><td><code>ShellTool</code></td><td>Run shell/terminal commands</td></tr>
+            <tr><td><code>RequestsGetTool</code></td><td>Make HTTP GET requests to any API</td></tr>
+            <tr><td><code>GmailSendMessageTool</code></td><td>Send emails via Gmail</td></tr>
+            <tr><td><code>SlackSendMessageTool</code></td><td>Post messages to Slack</td></tr>
+            <tr><td><code>SQLDatabaseQueryTool</code></td><td>Run SQL queries on your database</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+    <div class="card" style="border-color:rgba(244,114,182,.35)">
+      <div class="card-title" style="color:var(--c6)">② Custom Tools</div>
+      <p><strong>You define them</strong> — wrap any Python function or API as a tool the LLM can call.</p>
+      <p style="margin-top:10px"><strong>Use when:</strong></p>
+      <ul class="ck" style="margin-top:6px">
+        <li>You want to call <strong>your own APIs or microservices</strong></li>
+        <li>You want to <strong>encapsulate business logic</strong></li>
+        <li>You want the LLM to interact with <strong>your database or product</strong></li>
+      </ul>
+    </div>
+  </div>
+
+  <h3 style="color:#fff;margin:26px 0 12px;font-size:1rem">3 Ways to Create Custom Tools</h3>
+  <div class="g3">
+    <div class="card" style="border-color:rgba(99,102,241,.35)">
+      <div class="card-title" style="color:var(--c2)">① @tool Decorator</div>
+      <p>The simplest way. Add <code>@tool</code> above any Python function. LangChain reads the name and docstring automatically.</p>
+      <pre data-lang="Python"><code><span class="kw">from</span> langchain_core.tools <span class="kw">import</span> tool
+
+<span class="op">@tool</span>
+<span class="kw">def</span> <span class="fn">multiply</span>(a: <span class="nb">int</span>, b: <span class="nb">int</span>) -> <span class="nb">int</span>:
+    <span class="st">"""Multiply two numbers."""</span>
+    <span class="kw">return</span> a * b</code></pre>
+    </div>
+    <div class="card" style="border-color:rgba(52,211,153,.35)">
+      <div class="card-title" style="color:var(--c4)">② StructuredTool + Pydantic</div>
+      <p>A Structured Tool where the input follows a Pydantic schema. Use when your tool needs multiple complex inputs with validation.</p>
+      <pre data-lang="Python"><code><span class="kw">from</span> langchain_core.tools <span class="kw">import</span> StructuredTool
+<span class="kw">from</span> pydantic <span class="kw">import</span> BaseModel
+
+<span class="kw">class</span> <span class="fn">MulInput</span>(BaseModel):
+    a: <span class="nb">int</span>
+    b: <span class="nb">int</span>
+
+tool = StructuredTool.<span class="fn">from_function</span>(
+    func=multiply, args_schema=MulInput
+)</code></pre>
+    </div>
+    <div class="card" style="border-color:rgba(245,158,11,.35)">
+      <div class="card-title" style="color:var(--c5)">③ BaseTool Class</div>
+      <p><strong>BaseTool</strong> is the abstract base class for ALL tools in LangChain. Both <code>@tool</code> and <code>StructuredTool</code> are built on top of it. Use for maximum control.</p>
+      <pre data-lang="Python"><code><span class="kw">from</span> langchain_core.tools <span class="kw">import</span> BaseTool
+
+<span class="kw">class</span> <span class="fn">MultiplyTool</span>(BaseTool):
+    name = <span class="st">"multiply"</span>
+    description = <span class="st">"Multiplies 2 numbers"</span>
+    <span class="kw">def</span> <span class="fn">_run</span>(<span class="nb">self</span>, a, b):
+        <span class="kw">return</span> a * b</code></pre>
+    </div>
+  </div>
+
+  <h3 style="color:#fff;margin:26px 0 12px;font-size:1rem">Toolkits — Bundles of Related Tools</h3>
+  <div class="def">A <strong>Toolkit</strong> is a collection of related tools packaged together for convenience and reusability. Import one toolkit to get all related tools automatically.</div>
+  <div class="card" style="margin-top:14px">
+    <div class="card-title">📦 Example: GoogleDriveToolKit</div>
+    <ul class="ck" style="margin-top:8px">
+      <li><code>GoogleDriveCreateFileTool</code> — Upload a file to Google Drive</li>
+      <li><code>GoogleDriveSearchTool</code> — Search files by name or content</li>
+      <li><code>GoogleDriveReadFileTool</code> — Read the contents of any file</li>
+    </ul>
+  </div>
+</section>
+
+<div class="hr"></div>
+
+<!-- SECTION 19 – TOOL CALLING -->
+<section class="section" id="s19">
+  <div class="section-header">
+    <div class="sicon i10">📡</div>
+    <div class="stg"><div class="snum">Section 19</div><div class="stitle">Tool Binding, Calling &amp; Execution</div></div>
+  </div>
+
+  <div class="def">
+    To use tools with an LLM there are <strong>3 steps</strong>: Bind (tell LLM which tools exist), Call (LLM decides which tool and arguments to use), and Execute (actually run the Python function and get a real result).
+  </div>
+
+  <div class="g3">
+    <div class="card" style="border-color:rgba(99,102,241,.35)">
+      <div class="card-title" style="color:var(--c2)">🔗 Step 1 — Tool Binding</div>
+      <p><strong>Tool Binding</strong> registers tools with the LLM so it knows what tools exist, what each does, and what input format to use.</p>
+      <pre data-lang="Python"><code><span class="cm"># Bind tools to the model</span>
+llm_with_tools = llm.<span class="fn">bind_tools</span>(
+    [multiply, search_tool]
+)</code></pre>
+      <div class="ex" style="margin-top:8px"><div class="ex-label">🌍 Analogy</div>Giving a new employee their access card and role manual. Before binding, LLM doesn't know tools exist.</div>
+    </div>
+
+    <div class="card" style="border-color:rgba(56,189,248,.35)">
+      <div class="card-title" style="color:var(--c3)">📞 Step 2 — Tool Calling</div>
+      <p><strong>Tool Calling</strong> is when the LLM decides it needs a tool and produces a structured response with the tool name + arguments.</p>
+      <div class="warn" style="margin:10px 0"><strong>Important:</strong> LLM does NOT run the tool — it only suggests which tool and arguments. LangChain/your code executes it.</div>
+      <pre data-lang="JSON"><code>{
+  <span class="st">"tool"</span>: <span class="st">"multiply"</span>,
+  <span class="st">"args"</span>: { <span class="st">"a"</span>: <span class="nb">8</span>, <span class="st">"b"</span>: <span class="nb">7</span> }
+}</code></pre>
+    </div>
+
+    <div class="card" style="border-color:rgba(52,211,153,.35)">
+      <div class="card-title" style="color:var(--c4)">⚙️ Step 3 — Tool Execution</div>
+      <p><strong>Tool Execution</strong> is when the actual Python function runs using the LLM-suggested arguments.</p>
+      <pre data-lang="Python"><code><span class="cm"># LLM said: call multiply(a=8, b=7)</span>
+result = <span class="fn">multiply</span>(a=<span class="nb">8</span>, b=<span class="nb">7</span>)
+<span class="cm"># result = 56  (real answer!)</span></code></pre>
+      <div class="ex" style="margin-top:8px"><div class="ex-label">🌍 Analogy</div>LLM is the manager writing the work order. Tool Execution is the employee who actually does the work.</div>
+    </div>
+  </div>
+</section>
+
+<div class="hr"></div>
+
+<!-- SECTION 20 – AI AGENTS DEEP DIVE -->
+<section class="section" id="s20">
+  <div class="section-header">
     <div class="sicon i2">🤖</div>
-    <div class="stg"><div class="snum">Section 18</div><div class="stitle">Agents</div></div>
+    <div class="stg"><div class="snum">Section 20</div><div class="stitle">AI Agents — Deep Dive</div></div>
+  </div>
+
+  <div class="def">
+    An <strong>AI Agent</strong> receives a high-level goal, then autonomously plans, decides, and executes a sequence of actions using external tools — while maintaining context, reasoning over multiple steps, and adapting to new information.<br><br>
+    <strong>Formula: AGENT = LLM (brain) + TOOLS (hands)</strong>
+  </div>
+
+  <h3 style="color:#fff;margin:26px 0 12px;font-size:1rem">5 Key Properties of an AI Agent</h3>
+  <div class="g3">
+    <div class="pill"><div class="pi">🎯</div><div class="pt"><strong>Goal-driven</strong><span>You tell WHAT you want, not HOW. The agent figures out the steps itself.</span></div></div>
+    <div class="pill"><div class="pi">🔧</div><div class="pt"><strong>Autonomous Planning</strong><span>Breaks down problems and sequences tasks without manual instruction per step.</span></div></div>
+    <div class="pill"><div class="pi">🛠️</div><div class="pt"><strong>Tool-using</strong><span>Calls APIs, calculators, search engines, databases to take real actions.</span></div></div>
+    <div class="pill"><div class="pi">💬</div><div class="pt"><strong>Context-aware</strong><span>Maintains memory across steps — knows what it already discovered.</span></div></div>
+    <div class="pill"><div class="pi">🔄</div><div class="pt"><strong>Adaptive</strong><span>Rethinks plan when things change — API fails, no results, tries another approach.</span></div></div>
+  </div>
+
+  <h3 style="color:#fff;margin:26px 0 12px;font-size:1rem">The ReAct Pattern (Reasoning + Acting)</h3>
+  <div class="def"><strong>ReAct</strong> is the design pattern used by most AI agents. The agent interleaves internal Thought with external Action in a loop until the task is complete. Introduced in paper "ReAct: Synergizing Reasoning and Acting in Language Models" (Yao et al., 2022).</div>
+
+  <div class="card" style="margin-top:14px">
+    <div class="card-title">💡 ReAct Trace Example</div>
+    <pre data-lang="ReAct Trace"><code><span class="cm">Thought:</span> I need to find the capital of France.
+<span class="fn">Action:</span> search_tool | Input: "capital of France"
+<span class="nb">Observation:</span> Paris
+
+<span class="cm">Thought:</span> Now I need the population of Paris.
+<span class="fn">Action:</span> search_tool | Input: "population of Paris"
+<span class="nb">Observation:</span> 2.1 million
+
+<span class="cm">Thought:</span> I now know the final answer.
+<span class="kw">Final Answer:</span> Paris is the capital of France with ~2.1 million people.</code></pre>
+  </div>
+
+  <h3 style="color:#fff;margin:26px 0 12px;font-size:1rem">Agent vs AgentExecutor</h3>
+  <div class="g2">
+    <div class="card" style="border-color:rgba(52,211,153,.3)">
+      <div class="card-title" style="color:var(--c4)">🧠 Agent (Brain)</div>
+      <p>The reasoning component. Given query + scratchpad, decides: call a tool (AgentAction) OR return final answer (AgentFinish). Does NOT run tools itself.</p>
+    </div>
+    <div class="card" style="border-color:rgba(56,189,248,.3)">
+      <div class="card-title" style="color:var(--c3)">⚙️ AgentExecutor (Manager)</div>
+      <ol class="steps" style="margin-top:8px">
+        <li><span>Sends query + scratchpad to Agent</span></li>
+        <li><span>Gets AgentAction — executes that tool</span></li>
+        <li><span>Collects observation, updates scratchpad</span></li>
+        <li><span>Loops until Agent returns AgentFinish</span></li>
+      </ol>
+    </div>
+  </div>
+
+  <h3 style="color:#fff;margin:26px 0 12px;font-size:1rem">Code — Creating an Agent</h3>
+  <div class="g2">
+    <div class="card">
+      <div class="card-title">Step 1: Create Agent</div>
+      <pre data-lang="Python"><code><span class="kw">from</span> langchain.agents <span class="kw">import</span> create_react_agent
+<span class="kw">from</span> langchain <span class="kw">import</span> hub
+
+prompt = hub.<span class="fn">pull</span>(<span class="st">"hwchase17/react"</span>)
+agent = <span class="fn">create_react_agent</span>(
+    llm=llm, tools=[search_tool], prompt=prompt
+)</code></pre>
+    </div>
+    <div class="card">
+      <div class="card-title">Step 2: Create AgentExecutor &amp; Run</div>
+      <pre data-lang="Python"><code><span class="kw">from</span> langchain.agents <span class="kw">import</span> AgentExecutor
+
+agent_executor = <span class="fn">AgentExecutor</span>(
+    agent=agent, tools=[search_tool], verbose=<span class="kw">True</span>
+)
+result = agent_executor.<span class="fn">invoke</span>(
+    {<span class="st">"input"</span>: <span class="st">"Capital of France?"</span>}
+)
+<span class="fn">print</span>(result[<span class="st">"output"</span>])</code></pre>
+    </div>
+  </div>
+  <div class="tip"><strong>💡 verbose=True</strong> prints every Thought, Action, Observation — great for learning and debugging!</div>
+</section>
+
+<div class="hr"></div>
+
+<!-- SECTION 21 – AGENTS QUICK REFERENCE -->
+<section class="section" id="s21">
+  <div class="section-header">
+    <div class="sicon i6">🚀</div>
+    <div class="stg"><div class="snum">Section 21</div><div class="stitle">Agents — Quick Reference</div></div>
   </div>
 
   <div class="def">
@@ -1349,12 +1618,12 @@ docs = retriever.<span class="fn">invoke</span>(<span class="st">"Albert Einstei
 <div class="hr"></div>
 
 <!-- ════════════════════════════════════════════
-     SECTION 19 – SETUP GUIDE
+     SECTION 22 – SETUP GUIDE
 ═════════════════════════════════════════════ -->
-<section class="section" id="s19">
+<section class="section" id="s22">
   <div class="section-header">
-    <div class="sicon i4">🚀</div>
-    <div class="stg"><div class="snum">Section 19</div><div class="stitle">Setup Guide — Step by Step</div></div>
+    <div class="sicon i4">🛠️</div>
+    <div class="stg"><div class="snum">Section 22</div><div class="stitle">Setup Guide — Step by Step</div></div>
   </div>
 
   <h3 style="color:#fff;margin:0 0 16px;font-size:1rem">Project Setup Steps</h3>
@@ -1418,7 +1687,7 @@ key = os.<span class="fn">getenv</span>(<span class="st">"OPENAI_API_KEY"</span>
 <!-- ─── FOOTER ─── -->
 <div style="text-align:center;padding:48px 0 20px;color:var(--muted);font-size:13px;border-top:1px solid var(--border)">
   <p style="margin-bottom:8px;font-size:1.1rem">📚 <strong style="color:#fff">GenAI &amp; LangChain — Complete Study Guide</strong></p>
-  <p>19 Topics · From Fundamentals → Document Loaders → Text Splitting → Vector Stores → Retrievers → Agents</p>
+  <p>22 Topics · Fundamentals → Prompts → Chains → Memory → RAG → Tools → Tool Calling → Agents</p>
   <p style="margin-top:8px;color:rgba(148,163,184,.5)">Based on your OneNote screenshots · Built for revision &amp; deep understanding</p>
 </div>
 
